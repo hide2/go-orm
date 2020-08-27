@@ -1,9 +1,10 @@
-package main
+package orm
 
 import (
 	"database/sql"
 	"fmt"
 	"io/ioutil"
+	"testing"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -67,7 +68,13 @@ type Datasource struct {
 	Read  string `yaml:"read"`
 }
 
-func main() {
+type ModelsConfig struct {
+	Models []ModelConfig `yaml:"models,flow"`
+}
+
+type ModelConfig map[string]string
+
+func TestORM(t *testing.T) {
 	f, _ := ioutil.ReadFile("datasource.yml")
 	dss := Datasources{}
 	err := yaml.Unmarshal(f, &dss)

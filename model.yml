@@ -1,0 +1,9 @@
+models:
+
+  - model: User
+    id: int64
+    name: string
+
+  - model: Event
+    id: int64
+    event: string
