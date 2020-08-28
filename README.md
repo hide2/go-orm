@@ -95,7 +95,7 @@ User.destroy(1)
 
 // Create
 props := map[string]interface{}{"name": "Dog"}
-u = User.create(attpropsrs)
+u = User.create(props)
 fmt.Println("[Create]", u)
 
 // UPDATE
