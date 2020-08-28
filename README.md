@@ -26,8 +26,8 @@ Generate Model go files
 go run generator/generator.go -file model.yml
 ```
 Which will generate Model files
-```
 -- Generate model/User.go
+```
 type UserModel struct {
 
 	id int64
@@ -35,7 +35,9 @@ type UserModel struct {
 	name string
 
 }
+```
 -- Generate model/Event.go
+```
 type EventModel struct {
 
 	id int64
