@@ -26,6 +26,7 @@ Generate Model go files
 go run generator/generator.go -file model.yml
 ```
 Which will generate Model files
+
 -- Generate model/User.go
 ```
 type UserModel struct {
