@@ -46,7 +46,7 @@ func (m *UserModel) find(id int64) (*UserModel, error) {
 
 ...
 
-var User = UserModel{datasource: "default", table: "event"}
+var User = UserModel{datasource: "default", table: "user"}
 ```
 -- Generate model/Event.go
 ```
