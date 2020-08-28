@@ -12,7 +12,6 @@
 Define Models in model.yml
 ```
 models:
-
   - model: User
     id: int64
     name: string
@@ -20,6 +19,7 @@ models:
   - model: Event
     id: int64
     event: string
+    created_at: time.Time
 ```
 Generate Model go files
 ```
