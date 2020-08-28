@@ -1,0 +1,5 @@
+type {{.Model}}Model struct {
+{{ range $i, $k := .Keys }}
+	{{$k}} {{index $.Values $i}}
+{{ end }}
+}

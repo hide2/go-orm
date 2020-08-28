@@ -1,20 +1,23 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"os"
+	"text/template"
 
 	"gopkg.in/yaml.v2"
 )
 
-type ModelsConfig struct {
-	Models []ModelConfig `yaml:"models,flow"`
-}
-
-type ModelConfig map[string]string
-
 var inputConfigFile = flag.String("file", "model.yml", "Input model config yaml file")
+
+type ModelAttr struct {
+	Model  string
+	Keys   []string
+	Values []string
+}
 
 func main() {
 	flag.Parse()
@@ -23,19 +26,48 @@ func main() {
 	}
 
 	mf, _ := ioutil.ReadFile(*inputConfigFile)
-	mc := ModelsConfig{}
-	merr := yaml.Unmarshal(mf, &mc)
+	ms := make(map[string][]yaml.MapSlice)
+	merr := yaml.Unmarshal(mf, &ms)
 	if merr != nil {
 		fmt.Println("error:", merr)
 	}
-
-	fmt.Println("=== Models: ", mc.Models)
-	for _, m := range mc.Models {
-		fmt.Println("\n--", m["model"])
-		for k, v := range m {
-			if k != "model" {
-				fmt.Println(k, v)
+	for _, j := range ms["models"] {
+		var modelname, filename string
+		keys := make([]string, 0)
+		values := make([]string, 0)
+		for _, v := range j {
+			if v.Key != "model" {
+				keys = append(keys, v.Key.(string))
+				values = append(values, v.Value.(string))
+			} else {
+				modelname = v.Value.(string)
+				filename = "model/" + modelname + ".go"
 			}
 		}
+		fmt.Println("-- Generate", filename)
+		t, err := template.ParseFiles("generator/model.template")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		var b bytes.Buffer
+		m := ModelAttr{modelname, keys, values}
+		t.Execute(&b, m)
+		fmt.Println(b.String())
+
+		// Write to file
+		f, err := os.Create(filename)
+		if err != nil {
+			fmt.Println("create file: ", err)
+			return
+		}
+		err = t.Execute(f, m)
+		if err != nil {
+			fmt.Print("execute: ", err)
+			return
+		}
+		f.Close()
+
 	}
+
 }
