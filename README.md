@@ -40,8 +40,7 @@ type UserModel struct {
 ...
 
 func (m *UserModel) find(id int64) (*UserModel, error) {
-	// todo
-	return m, err
+	...
 }
 
 ...
@@ -63,8 +62,7 @@ type EventModel struct {
 ...
 
 func (m *EventModel) find(id int64) (*EventModel, error) {
-	// todo
-	return m, err
+	...
 }
 
 ...
