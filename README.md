@@ -36,6 +36,17 @@ type UserModel struct {
 	name string
 
 }
+
+...
+
+func (m *UserModel) find(id int64) (*UserModel, error) {
+	// todo
+	return m, err
+}
+
+...
+
+var User = UserModel{datasource: "default", table: "event"}
 ```
 -- Generate model/Event.go
 ```
@@ -48,4 +59,15 @@ type EventModel struct {
 	created_at time.Time
 
 }
+
+...
+
+func (m *EventModel) find(id int64) (*EventModel, error) {
+	// todo
+	return m, err
+}
+
+...
+
+var Event = EventModel{datasource: "default", table: "event"}
 ```
