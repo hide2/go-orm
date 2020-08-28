@@ -26,7 +26,7 @@ func (m *{{.Model}}Model) _save() (string, ...interface{}) {
 	return sql, args
 }
 
-func (m *{{.Model}}Model) _create(attrs map[string]interface{}) (string, ...interface{}) {
+func (m *{{.Model}}Model) _create(props map[string]interface{}) (string, ...interface{}) {
 	// todo
 	return sql, args
 }
@@ -66,13 +66,12 @@ func (m *{{.Model}}Model) where(conds map[string]interface{}) []*{{.Model}}Model
 	return ms
 }
 
-
 func (m *{{.Model}}Model) save() (*{{.Model}}Model, error) {
 	// todo
 	return m, err
 }
 
-func (m *{{.Model}}Model) create(attrs map[string]interface{}) (*{{.Model}}Model, error) {
+func (m *{{.Model}}Model) create(props map[string]interface{}) (*{{.Model}}Model, error) {
 	// todo
 	return m, err
 }
@@ -87,7 +86,7 @@ func (m *{{.Model}}Model) destroy(id int64) error {
 	retrun err
 }
 
-func (m *{{.Model}}Model) update(conds map[string]interface{}) error {
+func (m *{{.Model}}Model) update(props map[string]interface{}, conds map[string]interface{}) error {
 	// todo
 	return err
 }

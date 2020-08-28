@@ -30,7 +30,7 @@ func (m *EventModel) _save() (string, ...interface{}) {
 	return sql, args
 }
 
-func (m *EventModel) _create(attrs map[string]interface{}) (string, ...interface{}) {
+func (m *EventModel) _create(props map[string]interface{}) (string, ...interface{}) {
 	// todo
 	return sql, args
 }
@@ -70,13 +70,12 @@ func (m *EventModel) where(conds map[string]interface{}) []*EventModel {
 	return ms
 }
 
-
 func (m *EventModel) save() (*EventModel, error) {
 	// todo
 	return m, err
 }
 
-func (m *EventModel) create(attrs map[string]interface{}) (*EventModel, error) {
+func (m *EventModel) create(props map[string]interface{}) (*EventModel, error) {
 	// todo
 	return m, err
 }
@@ -91,7 +90,7 @@ func (m *EventModel) destroy(id int64) error {
 	retrun err
 }
 
-func (m *EventModel) update(conds map[string]interface{}) error {
+func (m *EventModel) update(props map[string]interface{}, conds map[string]interface{}) error {
 	// todo
 	return err
 }
