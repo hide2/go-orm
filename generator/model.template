@@ -1,5 +1,95 @@
 type {{.Model}}Model struct {
+	datasource string
+	table      string
 {{ range $i, $k := .Keys }}
 	{{$k}} {{index $.Values $i}}
 {{ end }}
 }
+
+func (m *{{.Model}}Model) _createtable() {
+	// todo
+	return sql
+}
+
+func (m *{{.Model}}Model) _find(id int64) (string, int64)  {
+	sql := "SELECT * FROM {{.Table}} WHERE id = ?"
+	return sql, id
+}
+
+func (m *{{.Model}}Model) _where(conds map[string]interface{}) (string, ...interface{}) {
+	// todo
+	return sql, args
+}
+
+func (m *{{.Model}}Model) _save() (string, ...interface{}) {
+	// todo
+	return sql, args
+}
+
+func (m *{{.Model}}Model) _create(attrs map[string]interface{}) (string, ...interface{}) {
+	// todo
+	return sql, args
+}
+
+func (m *{{.Model}}Model) _delete() (string, int64) {
+	// todo
+	return sql, id
+}
+
+func (m *{{.Model}}Model) _destroy(id int64) (string, int)  {
+	sql := "DELETE FROM {{.Table}} WHERE id = ?"
+	return sql, id
+}
+
+func (m *{{.Model}}Model) _update(props map[string]interface{}, conds map[string]interface{}) (string, ...interface{}) {
+	// todo
+	return sql, args
+}
+
+func (m *{{.Model}}Model) createtable() {
+	// todo
+}
+
+func (m *{{.Model}}Model) new() *{{.Model}}Model {
+	// todo
+	return m
+}
+
+func (m *{{.Model}}Model) find(id int64) (*{{.Model}}Model, error) {
+	// todo
+	return m, err
+}
+
+func (m *{{.Model}}Model) where(conds map[string]interface{}) []*{{.Model}}Model {
+	// todo
+	ms := []*{{.Model}}Model{}
+	return ms
+}
+
+
+func (m *{{.Model}}Model) save() (*{{.Model}}Model, error) {
+	// todo
+	return m, err
+}
+
+func (m *{{.Model}}Model) create(attrs map[string]interface{}) (*{{.Model}}Model, error) {
+	// todo
+	return m, err
+}
+
+func (m *{{.Model}}Model) delete() error {
+	// todo
+	return err
+}
+
+func (m *{{.Model}}Model) destroy(id int64) error {
+	// todo
+	retrun err
+}
+
+func (m *{{.Model}}Model) update(conds map[string]interface{}) error {
+	// todo
+	return err
+}
+
+var {{.Model}} = {{.Model}}Model{datasource: "default", table: "{{.Table}}"}

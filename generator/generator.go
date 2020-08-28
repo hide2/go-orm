@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"text/template"
 
 	"gopkg.in/yaml.v2"
@@ -15,6 +16,7 @@ var inputConfigFile = flag.String("file", "model.yml", "Input model config yaml 
 
 type ModelAttr struct {
 	Model  string
+	Table  string
 	Keys   []string
 	Values []string
 }
@@ -32,7 +34,7 @@ func main() {
 		fmt.Println("error:", merr)
 	}
 	for _, j := range ms["models"] {
-		var modelname, filename string
+		var modelname, table, filename string
 		keys := make([]string, 0)
 		values := make([]string, 0)
 		for _, v := range j {
@@ -41,6 +43,7 @@ func main() {
 				values = append(values, v.Value.(string))
 			} else {
 				modelname = v.Value.(string)
+				table = strings.ToLower(modelname)
 				filename = "model/" + modelname + ".go"
 			}
 		}
@@ -51,7 +54,7 @@ func main() {
 			return
 		}
 		var b bytes.Buffer
-		m := ModelAttr{modelname, keys, values}
+		m := ModelAttr{modelname, table, keys, values}
 		t.Execute(&b, m)
 		fmt.Println(b.String())
 

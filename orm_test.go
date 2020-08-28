@@ -47,11 +47,22 @@ func (u *UserModel) create(attrs map[string]interface{}) *UserModel {
 	return u
 }
 
-func (u *UserModel) destroy(id int64) *UserModel {
-	return u
+func (u *UserModel) delete() {
+}
+
+func (u *UserModel) destroy(id int64) {
+}
+
+func (u *UserModel) count(conds map[string]interface{}) int {
+	return 0
 }
 
 func (u *UserModel) where(conds map[string]interface{}) []*UserModel {
+	us := []*UserModel{}
+	return us
+}
+
+func (u *UserModel) update(pros map[string]interface{}, conds map[string]interface{}) []*UserModel {
 	us := []*UserModel{}
 	return us
 }
