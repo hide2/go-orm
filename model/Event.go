@@ -1,8 +1,15 @@
+package model
+
+import (
+
+	"fmt"
+
+	"time"
+)
+
 type EventModel struct {
 	datasource string
 	table      string
-
-	id int64
 
 	event string
 
@@ -10,89 +17,61 @@ type EventModel struct {
 
 }
 
-func (m *EventModel) _createtable() {
-	// todo
-	return sql
-}
+func (m *EventModel) CreateTable() {
+	sql := `CREATE TABLE event (
+		id BIGINT AUTO_INCREMENT,
 
-func (m *EventModel) _find(id int64) (string, int64)  {
-	sql := "SELECT * FROM event WHERE id = ?"
-	return sql, id
-}
+		event VARCHAR(255),
 
-func (m *EventModel) _where(conds map[string]interface{}) (string, ...interface{}) {
-	// todo
-	return sql, args
-}
+		created_at DATETIME,
 
-func (m *EventModel) _save() (string, ...interface{}) {
-	// todo
-	return sql, args
-}
-
-func (m *EventModel) _create(props map[string]interface{}) (string, ...interface{}) {
-	// todo
-	return sql, args
-}
-
-func (m *EventModel) _delete() (string, int64) {
-	// todo
-	return sql, id
-}
-
-func (m *EventModel) _destroy(id int64) (string, int)  {
-	sql := "DELETE FROM event WHERE id = ?"
-	return sql, id
-}
-
-func (m *EventModel) _update(props map[string]interface{}, conds map[string]interface{}) (string, ...interface{}) {
-	// todo
-	return sql, args
-}
-
-func (m *EventModel) createtable() {
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
+	fmt.Println(sql)
 	// todo
 }
 
-func (m *EventModel) new() *EventModel {
+func (m *EventModel) New() *EventModel {
 	// todo
 	return m
 }
 
-func (m *EventModel) find(id int64) (*EventModel, error) {
-	// todo
-	return m, err
+func (m *EventModel) Find(id int64) (*EventModel, error) {
+	sql := "SELECT * FROM event WHERE id = ?"
+	fmt.Println(sql)
+	return m, nil
 }
 
-func (m *EventModel) where(conds map[string]interface{}) []*EventModel {
+func (m *EventModel) Where(conds map[string]interface{}) []*EventModel {
 	// todo
 	ms := []*EventModel{}
 	return ms
 }
 
-func (m *EventModel) save() (*EventModel, error) {
+func (m *EventModel) Save() (*EventModel, error) {
 	// todo
-	return m, err
+	return m, nil
 }
 
-func (m *EventModel) create(props map[string]interface{}) (*EventModel, error) {
+func (m *EventModel) Create(props map[string]interface{}) (*EventModel, error) {
 	// todo
-	return m, err
+	return m, nil
 }
 
-func (m *EventModel) delete() error {
+func (m *EventModel) Delete() error {
 	// todo
-	return err
+	return nil
 }
 
-func (m *EventModel) destroy(id int64) error {
+func (m *EventModel) Destroy(id int64) error {
+	// sql := "DELETE FROM event WHERE id = ?"
 	// todo
-	retrun err
+	return nil
 }
 
-func (m *EventModel) update(props map[string]interface{}, conds map[string]interface{}) error {
+func (m *EventModel) Update(props map[string]interface{}, conds map[string]interface{}) error {
 	// todo
-	return err
+	return nil
 }
 
 var Event = EventModel{datasource: "default", table: "event"}

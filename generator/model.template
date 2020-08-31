@@ -1,3 +1,11 @@
+package model
+
+import (
+{{ range $i, $m := .Imports }}
+	"{{$m}}"
+{{ end -}}
+)
+
 type {{.Model}}Model struct {
 	datasource string
 	table      string
@@ -6,89 +14,59 @@ type {{.Model}}Model struct {
 {{ end }}
 }
 
-func (m *{{.Model}}Model) _createtable() {
-	// todo
-	return sql
-}
-
-func (m *{{.Model}}Model) _find(id int64) (string, int64)  {
-	sql := "SELECT * FROM {{.Table}} WHERE id = ?"
-	return sql, id
-}
-
-func (m *{{.Model}}Model) _where(conds map[string]interface{}) (string, ...interface{}) {
-	// todo
-	return sql, args
-}
-
-func (m *{{.Model}}Model) _save() (string, ...interface{}) {
-	// todo
-	return sql, args
-}
-
-func (m *{{.Model}}Model) _create(props map[string]interface{}) (string, ...interface{}) {
-	// todo
-	return sql, args
-}
-
-func (m *{{.Model}}Model) _delete() (string, int64) {
-	// todo
-	return sql, id
-}
-
-func (m *{{.Model}}Model) _destroy(id int64) (string, int)  {
-	sql := "DELETE FROM {{.Table}} WHERE id = ?"
-	return sql, id
-}
-
-func (m *{{.Model}}Model) _update(props map[string]interface{}, conds map[string]interface{}) (string, ...interface{}) {
-	// todo
-	return sql, args
-}
-
-func (m *{{.Model}}Model) createtable() {
+func (m *{{.Model}}Model) CreateTable() {
+	sql := `CREATE TABLE {{.Table}} (
+		id BIGINT AUTO_INCREMENT,
+{{ range $i, $k := .Keys }}
+		{{$k}} {{index $.Columns $i}},
+{{ end }}
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
+	fmt.Println(sql)
 	// todo
 }
 
-func (m *{{.Model}}Model) new() *{{.Model}}Model {
+func (m *{{.Model}}Model) New() *{{.Model}}Model {
 	// todo
 	return m
 }
 
-func (m *{{.Model}}Model) find(id int64) (*{{.Model}}Model, error) {
-	// todo
-	return m, err
+func (m *{{.Model}}Model) Find(id int64) (*{{.Model}}Model, error) {
+	sql := "SELECT * FROM {{.Table}} WHERE id = ?"
+	fmt.Println(sql)
+	return m, nil
 }
 
-func (m *{{.Model}}Model) where(conds map[string]interface{}) []*{{.Model}}Model {
+func (m *{{.Model}}Model) Where(conds map[string]interface{}) []*{{.Model}}Model {
 	// todo
 	ms := []*{{.Model}}Model{}
 	return ms
 }
 
-func (m *{{.Model}}Model) save() (*{{.Model}}Model, error) {
+func (m *{{.Model}}Model) Save() (*{{.Model}}Model, error) {
 	// todo
-	return m, err
+	return m, nil
 }
 
-func (m *{{.Model}}Model) create(props map[string]interface{}) (*{{.Model}}Model, error) {
+func (m *{{.Model}}Model) Create(props map[string]interface{}) (*{{.Model}}Model, error) {
 	// todo
-	return m, err
+	return m, nil
 }
 
-func (m *{{.Model}}Model) delete() error {
+func (m *{{.Model}}Model) Delete() error {
 	// todo
-	return err
+	return nil
 }
 
-func (m *{{.Model}}Model) destroy(id int64) error {
+func (m *{{.Model}}Model) Destroy(id int64) error {
+	// sql := "DELETE FROM {{.Table}} WHERE id = ?"
 	// todo
-	retrun err
+	return nil
 }
 
-func (m *{{.Model}}Model) update(props map[string]interface{}, conds map[string]interface{}) error {
+func (m *{{.Model}}Model) Update(props map[string]interface{}, conds map[string]interface{}) error {
 	// todo
-	return err
+	return nil
 }
 
 var {{.Model}} = {{.Model}}Model{datasource: "default", table: "{{.Table}}"}

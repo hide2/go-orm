@@ -15,10 +15,12 @@ import (
 var inputConfigFile = flag.String("file", "model.yml", "Input model config yaml file")
 
 type ModelAttr struct {
-	Model  string
-	Table  string
-	Keys   []string
-	Values []string
+	Model   string
+	Table   string
+	Imports []string
+	Keys    []string
+	Values  []string
+	Columns []string
 }
 
 func main() {
@@ -35,12 +37,25 @@ func main() {
 	}
 	for _, j := range ms["models"] {
 		var modelname, table, filename string
+		imports := make([]string, 0)
 		keys := make([]string, 0)
 		values := make([]string, 0)
+		columns := make([]string, 0)
+		imports = append(imports, "fmt")
 		for _, v := range j {
 			if v.Key != "model" {
 				keys = append(keys, v.Key.(string))
 				values = append(values, v.Value.(string))
+				c := v.Value.(string)
+				if c == "string" {
+					c = "VARCHAR(255)"
+				} else if c == "int64" {
+					c = "BIGINT"
+				} else if c == "time.Time" {
+					c = "DATETIME"
+					imports = append(imports, "time")
+				}
+				columns = append(columns, c)
 			} else {
 				modelname = v.Value.(string)
 				table = strings.ToLower(modelname)
@@ -54,7 +69,7 @@ func main() {
 			return
 		}
 		var b bytes.Buffer
-		m := ModelAttr{modelname, table, keys, values}
+		m := ModelAttr{modelname, table, imports, keys, values, columns}
 		t.Execute(&b, m)
 		fmt.Println(b.String())
 

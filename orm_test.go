@@ -94,18 +94,24 @@ func TestORM(t *testing.T) {
 	}
 	DBs := make(map[string]map[string]*sql.DB)
 	for _, ds := range dss.Datasources {
-		conn := fmt.Sprintf("root:root@tcp(127.0.0.1:3306)/my_db_0")
-		db, err := sql.Open("mysql", conn)
+		wdb, err := sql.Open("mysql", ds.Write)
 		if err != nil {
 			fmt.Println("Connection to mysql failed:", err)
 			return
 		}
-		db.SetConnMaxLifetime(100 * time.Second) //最大连接周期，超时的连接就close
-		db.SetMaxOpenConns(100)                  //设置最大连接数
+		wdb.SetConnMaxLifetime(100 * time.Second) //最大连接周期，超时的连接就close
+		wdb.SetMaxOpenConns(100)                  //设置最大连接数
+		rdb, err := sql.Open("mysql", ds.Read)
+		if err != nil {
+			fmt.Println("Connection to mysql failed:", err)
+			return
+		}
+		rdb.SetConnMaxLifetime(100 * time.Second) //最大连接周期，超时的连接就close
+		rdb.SetMaxOpenConns(100)                  //设置最大连接数
 
 		DBs[ds.Name] = make(map[string]*sql.DB)
-		DBs[ds.Name]["w"] = db
-		DBs[ds.Name]["r"] = db
+		DBs[ds.Name]["w"] = wdb
+		DBs[ds.Name]["r"] = rdb
 	}
 	fmt.Println("DBs", DBs)
 

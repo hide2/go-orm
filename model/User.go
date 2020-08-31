@@ -1,96 +1,71 @@
+package model
+
+import (
+
+	"fmt"
+)
+
 type UserModel struct {
 	datasource string
 	table      string
-
-	id int64
 
 	name string
 
 }
 
-func (m *UserModel) _createtable() {
-	// todo
-	return sql
-}
+func (m *UserModel) CreateTable() {
+	sql := `CREATE TABLE user (
+		id BIGINT AUTO_INCREMENT,
 
-func (m *UserModel) _find(id int64) (string, int64)  {
-	sql := "SELECT * FROM user WHERE id = ?"
-	return sql, id
-}
+		name VARCHAR(255),
 
-func (m *UserModel) _where(conds map[string]interface{}) (string, ...interface{}) {
-	// todo
-	return sql, args
-}
-
-func (m *UserModel) _save() (string, ...interface{}) {
-	// todo
-	return sql, args
-}
-
-func (m *UserModel) _create(props map[string]interface{}) (string, ...interface{}) {
-	// todo
-	return sql, args
-}
-
-func (m *UserModel) _delete() (string, int64) {
-	// todo
-	return sql, id
-}
-
-func (m *UserModel) _destroy(id int64) (string, int)  {
-	sql := "DELETE FROM user WHERE id = ?"
-	return sql, id
-}
-
-func (m *UserModel) _update(props map[string]interface{}, conds map[string]interface{}) (string, ...interface{}) {
-	// todo
-	return sql, args
-}
-
-func (m *UserModel) createtable() {
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
+	fmt.Println(sql)
 	// todo
 }
 
-func (m *UserModel) new() *UserModel {
+func (m *UserModel) New() *UserModel {
 	// todo
 	return m
 }
 
-func (m *UserModel) find(id int64) (*UserModel, error) {
-	// todo
-	return m, err
+func (m *UserModel) Find(id int64) (*UserModel, error) {
+	sql := "SELECT * FROM user WHERE id = ?"
+	fmt.Println(sql)
+	return m, nil
 }
 
-func (m *UserModel) where(conds map[string]interface{}) []*UserModel {
+func (m *UserModel) Where(conds map[string]interface{}) []*UserModel {
 	// todo
 	ms := []*UserModel{}
 	return ms
 }
 
-func (m *UserModel) save() (*UserModel, error) {
+func (m *UserModel) Save() (*UserModel, error) {
 	// todo
-	return m, err
+	return m, nil
 }
 
-func (m *UserModel) create(props map[string]interface{}) (*UserModel, error) {
+func (m *UserModel) Create(props map[string]interface{}) (*UserModel, error) {
 	// todo
-	return m, err
+	return m, nil
 }
 
-func (m *UserModel) delete() error {
+func (m *UserModel) Delete() error {
 	// todo
-	return err
+	return nil
 }
 
-func (m *UserModel) destroy(id int64) error {
+func (m *UserModel) Destroy(id int64) error {
+	// sql := "DELETE FROM user WHERE id = ?"
 	// todo
-	retrun err
+	return nil
 }
 
-func (m *UserModel) update(props map[string]interface{}, conds map[string]interface{}) error {
+func (m *UserModel) Update(props map[string]interface{}, conds map[string]interface{}) error {
 	// todo
-	return err
+	return nil
 }
 
 var User = UserModel{datasource: "default", table: "user"}
