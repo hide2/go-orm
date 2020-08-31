@@ -1,16 +1,18 @@
 package model
 
 import (
-. "go-orm/db"
-"fmt"
-"time"
+	. "go-orm/db"
+
+	"fmt"
+	"time"
 )
 
 type EventModel struct {
-datasource string
-table      string
-event string
-created_at time.Time
+	datasource string
+	table      string
+
+	event string
+	created_at time.Time
 }
 
 func (m *EventModel) CreateTable() {
@@ -18,10 +20,8 @@ func (m *EventModel) CreateTable() {
 		id BIGINT AUTO_INCREMENT,
 
 		event VARCHAR(255),
-
 		created_at DATETIME,
-
-  PRIMARY KEY (id)
+		PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
 	fmt.Println(sql)
 	fmt.Println("datasource", DBPool[m.datasource])
