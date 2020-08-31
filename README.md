@@ -13,11 +13,9 @@ Define Models in model.yml
 ``` yml
 models:
   - model: User
-    id: int64
     name: string
 
   - model: Event
-    id: int64
     event: string
     created_at: time.Time
 ```
@@ -30,16 +28,14 @@ Which will generate Model files
 -- Generate model/User.go
 ``` go
 type UserModel struct {
-
-	id int64
-
-	name string
-
+  datasource string
+  table      string
+  name string
 }
 
 ...
 
-func (m *UserModel) find(id int64) (*UserModel, error) {
+func (m *UserModel) Find(id int64) (*UserModel, error) {
 	...
 }
 
@@ -50,18 +46,15 @@ var User = UserModel{datasource: "default", table: "user"}
 -- Generate model/Event.go
 ``` go
 type EventModel struct {
-
-	id int64
-
-	event string
-
-	created_at time.Time
-
+  datasource string
+  table      string
+  event string
+  created_at time.Time
 }
 
 ...
 
-func (m *EventModel) find(id int64) (*EventModel, error) {
+func (m *EventModel) Find(id int64) (*EventModel, error) {
 	...
 }
 
@@ -72,39 +65,39 @@ var Event = EventModel{datasource: "default", table: "event"}
 You can use your User/Event Model now:
 ``` go
 // Create Table
-User.createtable()
+User.CreateTable()
 
 // C
-u := User.new()
+u := User.New()
 u.name = "John"
-u.save()
+u.Save()
 fmt.Println("[Save]", u)
 
 // R
-u = User.find(1)
+u = User.Find(1)
 fmt.Println("[Find]", u)
 
 // U
 u.name = "Calvin"
-u.save()
+u.Save()
 fmt.Println("[Update]", u)
 
 // D
-u.delete()
-User.destroy(1)
+u.Delete()
+User.Destroy(1)
 
 // Create
 props := map[string]interface{}{"name": "Dog"}
-u = User.create(props)
+u = User.Create(props)
 fmt.Println("[Create]", u)
 
 // UPDATE
 props := map[string]interface{}{"name": "Cat"}
 conds := map[string]interface{}{"name": "Dog"}
-User.update(props, conds)
+User.Update(props, conds)
 
 // WHERE
 conds := map[string]interface{}{"name": "Cat"}
-us := User.where(conds)
+us := User.Where(conds)
 fmt.Println("[Where]", us))
 ```
