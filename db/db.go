@@ -22,7 +22,8 @@ type Datasource struct {
 
 var DBPool = make(map[string]map[string]*sql.DB)
 
-func InitDBPool() {
+// Init DBPool
+func init() {
 	f, _ := ioutil.ReadFile("datasource.yml")
 	dss := Datasources{}
 	err := yaml.Unmarshal(f, &dss)

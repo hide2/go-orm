@@ -10,8 +10,7 @@ import (
 )
 
 func main() {
-	InitDBPool()
-	fmt.Println("DBPoolDBs", DBPool)
+	fmt.Println("DBPool", DBPool)
 	User.CreateTable()
 	User.Find(1)
 }

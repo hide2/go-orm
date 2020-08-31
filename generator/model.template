@@ -1,18 +1,18 @@
 package model
 
 import (
-{{ range $i, $m := .Imports }}
+. "go-orm/db"
+{{ range $i, $m := .Imports -}}
 	"{{$m}}"
 {{ end -}}
 )
 
 type {{.Model}}Model struct {
-	datasource string
-	table      string
-{{ range $i, $k := .Keys }}
+datasource string
+table      string
+{{ range $i, $k := .Keys -}}
 	{{$k}} {{index $.Values $i}}
-{{ end }}
-}
+{{ end }}}
 
 func (m *{{.Model}}Model) CreateTable() {
 	sql := `CREATE TABLE {{.Table}} (
@@ -23,6 +23,7 @@ func (m *{{.Model}}Model) CreateTable() {
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
 	fmt.Println(sql)
+	fmt.Println("datasource", DBPool[m.datasource])
 	// todo
 }
 

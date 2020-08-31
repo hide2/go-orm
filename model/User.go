@@ -1,16 +1,14 @@
 package model
 
 import (
-
-	"fmt"
+. "go-orm/db"
+"fmt"
 )
 
 type UserModel struct {
-	datasource string
-	table      string
-
-	name string
-
+datasource string
+table      string
+name string
 }
 
 func (m *UserModel) CreateTable() {
@@ -22,6 +20,7 @@ func (m *UserModel) CreateTable() {
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
 	fmt.Println(sql)
+	fmt.Println("datasource", DBPool[m.datasource])
 	// todo
 }
 
