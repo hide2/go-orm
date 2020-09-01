@@ -15,13 +15,15 @@ import (
 var inputConfigFile = flag.String("file", "model.yml", "Input model config yaml file")
 
 type ModelAttr struct {
-	Model   string
-	Table   string
-	Imports []string
-	Attrs   []string
-	Keys    []string
-	Values  []string
-	Columns []string
+	Model      string
+	Table      string
+	Imports    []string
+	Attrs      []string
+	Keys       []string
+	Values     []string
+	Columns    []string
+	InsertSQL  string
+	InsertArgs string
 }
 
 func camelize(str string) string {
@@ -77,8 +79,18 @@ func main() {
 			fmt.Println(err)
 			return
 		}
+		cstr := strings.Join(keys, ",")
+		phs := make([]string, 0)
+		iargs := make([]string, 0)
+		for i := 0; i < len(attrs); i++ {
+			phs = append(phs, "?")
+			iargs = append(iargs, "m."+attrs[i])
+		}
+		ph := strings.Join(phs, ",")
+		iarg := strings.Join(iargs, ", ")
+		isql := fmt.Sprintf("INSERT INTO %s(%s) VALUES(%s)", table, cstr, ph)
+		m := ModelAttr{modelname, table, imports, attrs, keys, values, columns, isql, iarg}
 		var b bytes.Buffer
-		m := ModelAttr{modelname, table, imports, attrs, keys, values, columns}
 		t.Execute(&b, m)
 		fmt.Println(b.String())
 

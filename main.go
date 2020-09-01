@@ -22,8 +22,11 @@ func main() {
 	fmt.Println("[Save]", u)
 
 	// R
-	u, e := User.Find(1)
-	fmt.Println("[Find]", u, e)
+	u, e := User.Find(123)
+	fmt.Println("[Find(123)]", u, e)
+
+	u, _ = User.Find(1)
+	fmt.Println("[Find(1)]", u)
 
 	// U
 	u.Name = "Calvin"
@@ -37,10 +40,12 @@ func main() {
 	// Create
 	props := map[string]interface{}{"name": "Dog"}
 	u, _ = User.Create(props)
+	u, _ = User.Create(props)
+	u, _ = User.Create(props)
 	fmt.Println("[Create]", u)
 
 	// WHERE
-	conds := map[string]interface{}{"name": "Cat"}
+	conds := map[string]interface{}{"name": "Dog"}
 	us := User.Where(conds)
 	fmt.Println("[Where]", us)
 
@@ -48,4 +53,6 @@ func main() {
 	props2 := map[string]interface{}{"name": "Cat"}
 	conds2 := map[string]interface{}{"name": "Dog"}
 	User.Update(props2, conds2)
+	us2 := User.Where(props2)
+	fmt.Println("[Update]", us2)
 }

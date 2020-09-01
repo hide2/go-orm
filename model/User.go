@@ -48,17 +48,29 @@ func (m *UserModel) Find(id int64) (*UserModel, error) {
 	db := DBPool[m.Datasource]["r"]
 	row := db.QueryRow(sql, id)
 	if err := row.Scan(&m.ID, &m.Name); err != nil {
-		fmt.Printf("Scan failed, err:%v\n", err)
 		return nil, err
 	}
 	return m, nil
 }
 
 func (m *UserModel) Save() (*UserModel, error) {
+	db := DBPool[m.Datasource]["w"]
+	// Update
 	if m.ID > 0 {
-		fmt.Println("--Update")
+	// Create
 	} else {
-		fmt.Println("--Save")
+		sql := "INSERT INTO user(name) VALUES(?)"
+		result, err := db.Exec(sql, m.Name)
+		if err != nil {
+			fmt.Printf("Insert data failed, err:%v", err)
+			return nil, err
+		}
+		lastInsertID, err := result.LastInsertId() //获取插入数据的自增ID
+		if err != nil {
+			fmt.Printf("Get insert id failed, err:%v", err)
+			return nil, err
+		}
+		m.ID = lastInsertID
 	}
 	return m, nil
 }
