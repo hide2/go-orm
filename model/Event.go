@@ -8,14 +8,23 @@ import (
 )
 
 type EventModel struct {
-	datasource string
-	table      string
+	Datasource string
+	Table      string
 
-	event string
-	created_at time.Time
+	Event string
+	Created_at time.Time
 }
 
-func (m *EventModel) CreateTable() {
+func (m *EventModel) Exec(sql string) error {
+	db := DBPool[m.Datasource]["w"]
+	if _, err := db.Exec(sql); err != nil {
+		fmt.Println("Execute sql failed:", err)
+		return err
+	}
+	return nil
+}
+
+func (m *EventModel) CreateTable() error {
 	sql := `CREATE TABLE event (
 		id BIGINT AUTO_INCREMENT,
 
@@ -23,9 +32,12 @@ func (m *EventModel) CreateTable() {
 		created_at DATETIME,
 		PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
-	fmt.Println(sql)
-	fmt.Println("datasource", DBPool[m.datasource])
-	// todo
+	db := DBPool[m.Datasource]["w"]
+	if _, err := db.Exec(sql); err != nil {
+		fmt.Println("Create table failed:", err)
+		return err
+	}
+	return nil
 }
 
 func (m *EventModel) New() *EventModel {
@@ -71,4 +83,4 @@ func (m *EventModel) Update(props map[string]interface{}, conds map[string]inter
 	return nil
 }
 
-var Event = EventModel{datasource: "default", table: "event"}
+var Event = EventModel{Datasource: "default", Table: "event"}

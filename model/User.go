@@ -7,22 +7,34 @@ import (
 )
 
 type UserModel struct {
-	datasource string
-	table      string
+	Datasource string
+	Table      string
 
-	name string
+	Name string
 }
 
-func (m *UserModel) CreateTable() {
+func (m *UserModel) Exec(sql string) error {
+	db := DBPool[m.Datasource]["w"]
+	if _, err := db.Exec(sql); err != nil {
+		fmt.Println("Execute sql failed:", err)
+		return err
+	}
+	return nil
+}
+
+func (m *UserModel) CreateTable() error {
 	sql := `CREATE TABLE user (
 		id BIGINT AUTO_INCREMENT,
 
 		name VARCHAR(255),
 		PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
-	fmt.Println(sql)
-	fmt.Println("datasource", DBPool[m.datasource])
-	// todo
+	db := DBPool[m.Datasource]["w"]
+	if _, err := db.Exec(sql); err != nil {
+		fmt.Println("Create table failed:", err)
+		return err
+	}
+	return nil
 }
 
 func (m *UserModel) New() *UserModel {
@@ -68,4 +80,4 @@ func (m *UserModel) Update(props map[string]interface{}, conds map[string]interf
 	return nil
 }
 
-var User = UserModel{datasource: "default", table: "user"}
+var User = UserModel{Datasource: "default", Table: "user"}

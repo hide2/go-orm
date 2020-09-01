@@ -66,6 +66,9 @@ var Event = EventModel{datasource: "default", table: "event"}
 ```
 You can use your User/Event Model now:
 ``` go
+// Exec SQL
+User.Exec("DROP TABLE IF EXISTS user")
+
 // Create Table
 User.CreateTable()
 
@@ -93,13 +96,13 @@ props := map[string]interface{}{"name": "Dog"}
 u = User.Create(props)
 fmt.Println("[Create]", u)
 
-// UPDATE
-props := map[string]interface{}{"name": "Cat"}
-conds := map[string]interface{}{"name": "Dog"}
-User.Update(props, conds)
-
 // WHERE
 conds := map[string]interface{}{"name": "Cat"}
 us := User.Where(conds)
-fmt.Println("[Where]", us))
+fmt.Println("[Where]", us)
+
+// UPDATE
+props2 := map[string]interface{}{"name": "Cat"}
+conds2 := map[string]interface{}{"name": "Dog"}
+User.Update(props2, conds2)
 ```

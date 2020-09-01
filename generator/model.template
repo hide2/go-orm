@@ -8,14 +8,23 @@ import (
 )
 
 type {{.Model}}Model struct {
-	datasource string
-	table      string
-{{ range $i, $k := .Keys }}
+	Datasource string
+	Table      string
+{{ range $i, $k := .Attrs }}
 	{{$k}} {{index $.Values $i}}
 {{- end }}
 }
 
-func (m *{{.Model}}Model) CreateTable() {
+func (m *{{.Model}}Model) Exec(sql string) error {
+	db := DBPool[m.Datasource]["w"]
+	if _, err := db.Exec(sql); err != nil {
+		fmt.Println("Execute sql failed:", err)
+		return err
+	}
+	return nil
+}
+
+func (m *{{.Model}}Model) CreateTable() error {
 	sql := `CREATE TABLE {{.Table}} (
 		id BIGINT AUTO_INCREMENT,
 {{ range $i, $k := .Keys }}
@@ -23,9 +32,12 @@ func (m *{{.Model}}Model) CreateTable() {
 {{- end }}
 		PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
-	fmt.Println(sql)
-	fmt.Println("datasource", DBPool[m.datasource])
-	// todo
+	db := DBPool[m.Datasource]["w"]
+	if _, err := db.Exec(sql); err != nil {
+		fmt.Println("Create table failed:", err)
+		return err
+	}
+	return nil
 }
 
 func (m *{{.Model}}Model) New() *{{.Model}}Model {
@@ -71,4 +83,4 @@ func (m *{{.Model}}Model) Update(props map[string]interface{}, conds map[string]
 	return nil
 }
 
-var {{.Model}} = {{.Model}}Model{datasource: "default", table: "{{.Table}}"}
+var {{.Model}} = {{.Model}}Model{Datasource: "default", Table: "{{.Table}}"}

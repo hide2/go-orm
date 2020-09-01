@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"text/template"
+	"unicode"
 
 	"gopkg.in/yaml.v2"
 )
@@ -18,9 +19,17 @@ type ModelAttr struct {
 	Model   string
 	Table   string
 	Imports []string
+	Attrs   []string
 	Keys    []string
 	Values  []string
 	Columns []string
+}
+
+func ucfirst(str string) string {
+	for i, v := range str {
+		return string(unicode.ToUpper(v)) + str[i+1:]
+	}
+	return ""
 }
 
 func main() {
@@ -38,12 +47,14 @@ func main() {
 	for _, j := range ms["models"] {
 		var modelname, table, filename string
 		imports := make([]string, 0)
+		attrs := make([]string, 0)
 		keys := make([]string, 0)
 		values := make([]string, 0)
 		columns := make([]string, 0)
 		imports = append(imports, "fmt")
 		for _, v := range j {
 			if v.Key != "model" {
+				attrs = append(attrs, ucfirst(v.Key.(string)))
 				keys = append(keys, v.Key.(string))
 				values = append(values, v.Value.(string))
 				c := v.Value.(string)
@@ -69,7 +80,7 @@ func main() {
 			return
 		}
 		var b bytes.Buffer
-		m := ModelAttr{modelname, table, imports, keys, values, columns}
+		m := ModelAttr{modelname, table, imports, attrs, keys, values, columns}
 		t.Execute(&b, m)
 		fmt.Println(b.String())
 
