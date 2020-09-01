@@ -10,9 +10,10 @@ import (
 type EventModel struct {
 	Datasource string
 	Table      string
+	ID         int64
 
-	Event string
-	Created_at time.Time
+	Name string
+	CreatedAt time.Time
 }
 
 func (m *EventModel) Exec(sql string) error {
@@ -28,7 +29,7 @@ func (m *EventModel) CreateTable() error {
 	sql := `CREATE TABLE event (
 		id BIGINT AUTO_INCREMENT,
 
-		event VARCHAR(255),
+		name VARCHAR(255),
 		created_at DATETIME,
 		PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
@@ -41,13 +42,27 @@ func (m *EventModel) CreateTable() error {
 }
 
 func (m *EventModel) New() *EventModel {
-	// todo
-	return m
+	n := EventModel{Datasource: "default", Table: "event"}
+	return &n
 }
 
 func (m *EventModel) Find(id int64) (*EventModel, error) {
 	sql := "SELECT * FROM event WHERE id = ?"
-	fmt.Println(sql)
+	db := DBPool[m.Datasource]["r"]
+	row := db.QueryRow(sql, id)
+	if err := row.Scan(&m.ID, &m.Name); err != nil {
+		fmt.Printf("Scan failed, err:%v\n", err)
+		return nil, err
+	}
+	return m, nil
+}
+
+func (m *EventModel) Save() (*EventModel, error) {
+	if m.ID > 0 {
+		fmt.Println("--Update")
+	} else {
+		fmt.Println("--Save")
+	}
 	return m, nil
 }
 
@@ -55,11 +70,6 @@ func (m *EventModel) Where(conds map[string]interface{}) []*EventModel {
 	// todo
 	ms := []*EventModel{}
 	return ms
-}
-
-func (m *EventModel) Save() (*EventModel, error) {
-	// todo
-	return m, nil
 }
 
 func (m *EventModel) Create(props map[string]interface{}) (*EventModel, error) {

@@ -8,7 +8,6 @@ import (
 	"os"
 	"strings"
 	"text/template"
-	"unicode"
 
 	"gopkg.in/yaml.v2"
 )
@@ -25,11 +24,10 @@ type ModelAttr struct {
 	Columns []string
 }
 
-func ucfirst(str string) string {
-	for i, v := range str {
-		return string(unicode.ToUpper(v)) + str[i+1:]
-	}
-	return ""
+func camelize(str string) string {
+	str = strings.Replace(str, "_", " ", -1)
+	str = strings.Title(str)
+	return strings.Replace(str, " ", "", -1)
 }
 
 func main() {
@@ -54,7 +52,7 @@ func main() {
 		imports = append(imports, "fmt")
 		for _, v := range j {
 			if v.Key != "model" {
-				attrs = append(attrs, ucfirst(v.Key.(string)))
+				attrs = append(attrs, camelize(v.Key.(string)))
 				keys = append(keys, v.Key.(string))
 				values = append(values, v.Value.(string))
 				c := v.Value.(string)

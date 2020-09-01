@@ -16,7 +16,7 @@ models:
     name: string
 
   - model: Event
-    event: string
+    name: string
     created_at: time.Time
 ```
 Generate Model go files
@@ -30,6 +30,7 @@ Which will generate Model files
 type UserModel struct {
 	Datasource string
 	Table      string
+	ID         int64
 
 	Name string
 }
@@ -49,9 +50,10 @@ var User = UserModel{Datasource: "default", Table: "user"}
 type EventModel struct {
 	Datasource string
 	Table      string
+	ID         int64
 
-	Event string
-	Created_at time.Time
+	Name string
+	CreatedAt time.Time
 }
 
 ...

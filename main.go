@@ -7,20 +7,23 @@ import (
 
 func main() {
 	// Exec SQL
+	fmt.Println("[Drop Table user]")
 	User.Exec("DROP TABLE IF EXISTS user")
 
 	// Create Table
+	fmt.Println("[Create Table user]")
 	User.CreateTable()
 
 	// C
 	u := User.New()
+	fmt.Println("[New]", u)
 	u.Name = "John"
 	u.Save()
 	fmt.Println("[Save]", u)
 
 	// R
-	u, _ = User.Find(1)
-	fmt.Println("[Find]", u)
+	u, e := User.Find(1)
+	fmt.Println("[Find]", u, e)
 
 	// U
 	u.Name = "Calvin"
