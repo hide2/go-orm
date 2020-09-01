@@ -28,10 +28,10 @@ Which will generate Model files
 -- Generate model/User.go
 ``` go
 type UserModel struct {
-	datasource string
-	table      string
+	Datasource string
+	Table      string
 
-	name string
+	Name string
 }
 
 ...
@@ -42,16 +42,16 @@ func (m *UserModel) Find(id int64) (*UserModel, error) {
 
 ...
 
-var User = UserModel{datasource: "default", table: "user"}
+var User = UserModel{Datasource: "default", Table: "user"}
 ```
 -- Generate model/Event.go
 ``` go
 type EventModel struct {
-	datasource string
-	table      string
+	Datasource string
+	Table      string
 
-	event string
-	created_at time.Time
+	Event string
+	Created_at time.Time
 }
 
 ...
@@ -62,7 +62,7 @@ func (m *EventModel) Find(id int64) (*EventModel, error) {
 
 ...
 
-var Event = EventModel{datasource: "default", table: "event"}
+var Event = EventModel{Datasource: "default", Table: "event"}
 ```
 You can use your User/Event Model now:
 ``` go
