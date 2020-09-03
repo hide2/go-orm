@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	. "go-orm/model"
 )
@@ -19,6 +20,7 @@ func main() {
 	u := User.New()
 	fmt.Println("[New]", u)
 	u.Name = "John"
+	u.CreatedAt = time.Now()
 	u.Save()
 	fmt.Println("[Save]", u)
 
@@ -52,7 +54,7 @@ func main() {
 
 	// Create
 	for i := 0; i < 20; i++ {
-		props := map[string]interface{}{"name": "Dog"}
+		props := map[string]interface{}{"name": "Dog", "created_at": time.Now()}
 		u, _ = User.Create(props)
 		fmt.Println("[Create]", u)
 	}
@@ -86,7 +88,7 @@ func main() {
 	// Tx-Commit
 	User.Begin()
 	for i := 0; i < 10; i++ {
-		props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1)}
+		props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1), "created_at": time.Now()}
 		User.Create(props)
 	}
 	User.Destroy(25)
@@ -97,7 +99,7 @@ func main() {
 	// Tx-Rollback
 	User.Begin()
 	for i := 0; i < 10; i++ {
-		props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1)}
+		props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1), "created_at": time.Now()}
 		User.Create(props)
 	}
 	User.Rollback()

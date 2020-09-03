@@ -98,8 +98,7 @@ func (m *EventModel) Find(id int64) (*EventModel, error) {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
 	}
 	row := db.QueryRow(sql, id)
-	// todo
-	if err := row.Scan(&m.ID, &m.Name); err != nil {
+	if err := row.Scan(&m.ID, &m.Name, &m.CreatedAt); err != nil {
 		return nil, err
 	}
 	return m, nil

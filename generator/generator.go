@@ -25,6 +25,7 @@ type ModelAttr struct {
 	Columns    []string
 	InsertSQL  string
 	InsertArgs string
+	ScanStr    string
 }
 
 func main() {
@@ -77,14 +78,18 @@ func main() {
 		cstr := strings.Join(keys, ",")
 		phs := make([]string, 0)
 		iargs := make([]string, 0)
+		scans := make([]string, 0)
+		scans = append(scans, "&m.ID")
 		for i := 0; i < len(attrs); i++ {
 			phs = append(phs, "?")
 			iargs = append(iargs, "m."+attrs[i])
+			scans = append(scans, "&m."+attrs[i])
 		}
 		ph := strings.Join(phs, ",")
 		iarg := strings.Join(iargs, ", ")
+		scanstr := strings.Join(scans, ", ")
 		isql := fmt.Sprintf("INSERT INTO %s(%s) VALUES(%s)", table, cstr, ph)
-		m := ModelAttr{modelname, table, imports, attrs, keys, values, columns, isql, iarg}
+		m := ModelAttr{modelname, table, imports, attrs, keys, values, columns, isql, iarg, scanstr}
 		var b bytes.Buffer
 		t.Execute(&b, m)
 		fmt.Println(b.String())

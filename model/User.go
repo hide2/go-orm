@@ -16,7 +16,8 @@ type UserModel struct {
 	Trx        *Tx
 	ID         int64
 
-	Name string
+	Name      string
+	CreatedAt time.Time
 }
 
 func (m *UserModel) Begin() (*Tx, error) {
@@ -71,6 +72,7 @@ func (m *UserModel) CreateTable() error {
 		id BIGINT AUTO_INCREMENT,
 
 		name VARCHAR(255),
+		created_at DATETIME,
 		PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
 	db := DBPool[m.Datasource]["w"]
@@ -96,8 +98,7 @@ func (m *UserModel) Find(id int64) (*UserModel, error) {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
 	}
 	row := db.QueryRow(sql, id)
-	// todo
-	if err := row.Scan(&m.ID, &m.Name); err != nil {
+	if err := row.Scan(&m.ID, &m.Name, &m.CreatedAt); err != nil {
 		return nil, err
 	}
 	return m, nil
@@ -116,13 +117,13 @@ func (m *UserModel) Save() (*UserModel, error) {
 			}
 		}
 		return m, m.Update(uprops, conds)
-	// Create
+		// Create
 	} else {
-		sql := "INSERT INTO user(name) VALUES(?)"
+		sql := "INSERT INTO user(name,created_at) VALUES(?,?)"
 		if GoOrmSqlLog {
-			fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, m.Name)
+			fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, m.Name, m.CreatedAt)
 		}
-		result, err := db.Exec(sql, m.Name)
+		result, err := db.Exec(sql, m.Name, m.CreatedAt)
 		if err != nil {
 			fmt.Printf("Insert data failed, err:%v\n", err)
 			return nil, err
@@ -212,11 +213,11 @@ func (m *UserModel) Update(props map[string]interface{}, conds map[string]interf
 	wherestr := make([]string, 0)
 	cvs := make([]interface{}, 0)
 	for k, v := range props {
-		setstr = append(setstr, k + "=?")
+		setstr = append(setstr, k+"=?")
 		cvs = append(cvs, v)
 	}
 	for k, v := range conds {
-		wherestr = append(wherestr, k + "=?")
+		wherestr = append(wherestr, k+"=?")
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("UPDATE user SET %s WHERE %s", strings.Join(setstr, ", "), strings.Join(wherestr, " AND "))
