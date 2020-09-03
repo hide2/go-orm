@@ -24,8 +24,8 @@ type Datasource struct {
 
 var DBPool = make(map[string]map[string]*sql.DB)
 
-var SqlLog = false
-var SlowSqlLog = false
+var GoOrmSqlLog = false
+var GoOrmSlowSqlLog = false
 
 // Init DBPool
 func init() {
@@ -35,8 +35,8 @@ func init() {
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	SqlLog = dss.SqlLog
-	SlowSqlLog = dss.SlowSqlLog
+	GoOrmSqlLog = dss.SqlLog
+	GoOrmSlowSqlLog = dss.SlowSqlLog
 	for _, ds := range dss.Datasources {
 		wdb, err := sql.Open("mysql", ds.Write)
 		if err != nil {

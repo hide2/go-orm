@@ -21,7 +21,7 @@ type {{.Model}}Model struct {
 
 func (m *{{.Model}}Model) Exec(sql string) error {
 	db := DBPool[m.Datasource]["w"]
-	if SqlLog {
+	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
 	if _, err := db.Exec(sql); err != nil {
@@ -40,7 +40,7 @@ func (m *{{.Model}}Model) CreateTable() error {
 		PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
 	db := DBPool[m.Datasource]["w"]
-	if SqlLog {
+	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
 	if _, err := db.Exec(sql); err != nil {
@@ -58,7 +58,7 @@ func (m *{{.Model}}Model) New() *{{.Model}}Model {
 func (m *{{.Model}}Model) Find(id int64) (*{{.Model}}Model, error) {
 	sql := "SELECT * FROM {{.Table}} WHERE id = ?"
 	db := DBPool[m.Datasource]["r"]
-	if SqlLog {
+	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
 	}
 	row := db.QueryRow(sql, id)
@@ -85,7 +85,7 @@ func (m *{{.Model}}Model) Save() (*{{.Model}}Model, error) {
 	// Create
 	} else {
 		sql := "{{.InsertSQL}}"
-		if SqlLog {
+		if GoOrmSqlLog {
 			fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, {{.InsertArgs}})
 		}
 		result, err := db.Exec(sql, {{.InsertArgs}})
@@ -126,7 +126,7 @@ func (m *{{.Model}}Model) Create(props map[string]interface{}) (*{{.Model}}Model
 	ph := strings.Join(phs, ",")
 	sql := fmt.Sprintf("INSERT INTO {{.Table}}(%s) VALUES(%s)", cstr, ph)
 
-	if SqlLog {
+	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, values)
 	}
 	result, err := db.Exec(sql, values...)
@@ -167,7 +167,7 @@ func (m *{{.Model}}Model) Update(props map[string]interface{}, conds map[string]
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("UPDATE {{.Table}} SET %s WHERE %s", strings.Join(setstr, ", "), strings.Join(wherestr, " AND "))
-	if SqlLog {
+	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
 	_, err := db.Exec(sql, cvs...)

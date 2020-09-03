@@ -20,7 +20,7 @@ type EventModel struct {
 
 func (m *EventModel) Exec(sql string) error {
 	db := DBPool[m.Datasource]["w"]
-	if SqlLog {
+	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
 	if _, err := db.Exec(sql); err != nil {
@@ -39,7 +39,7 @@ func (m *EventModel) CreateTable() error {
 		PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
 	db := DBPool[m.Datasource]["w"]
-	if SqlLog {
+	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
 	if _, err := db.Exec(sql); err != nil {
@@ -57,7 +57,7 @@ func (m *EventModel) New() *EventModel {
 func (m *EventModel) Find(id int64) (*EventModel, error) {
 	sql := "SELECT * FROM event WHERE id = ?"
 	db := DBPool[m.Datasource]["r"]
-	if SqlLog {
+	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
 	}
 	row := db.QueryRow(sql, id)
@@ -84,7 +84,7 @@ func (m *EventModel) Save() (*EventModel, error) {
 	// Create
 	} else {
 		sql := "INSERT INTO event(name,created_at) VALUES(?,?)"
-		if SqlLog {
+		if GoOrmSqlLog {
 			fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, m.Name, m.CreatedAt)
 		}
 		result, err := db.Exec(sql, m.Name, m.CreatedAt)
@@ -125,7 +125,7 @@ func (m *EventModel) Create(props map[string]interface{}) (*EventModel, error) {
 	ph := strings.Join(phs, ",")
 	sql := fmt.Sprintf("INSERT INTO event(%s) VALUES(%s)", cstr, ph)
 
-	if SqlLog {
+	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, values)
 	}
 	result, err := db.Exec(sql, values...)
@@ -166,7 +166,7 @@ func (m *EventModel) Update(props map[string]interface{}, conds map[string]inter
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("UPDATE event SET %s WHERE %s", strings.Join(setstr, ", "), strings.Join(wherestr, " AND "))
-	if SqlLog {
+	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
 	_, err := db.Exec(sql, cvs...)
