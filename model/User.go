@@ -124,12 +124,12 @@ func (m *UserModel) Save() (*UserModel, error) {
 		}
 		result, err := db.Exec(sql, m.Name)
 		if err != nil {
-			fmt.Printf("Insert data failed, err:%v", err)
+			fmt.Printf("Insert data failed, err:%v\n", err)
 			return nil, err
 		}
 		lastInsertID, err := result.LastInsertId() //获取插入数据的自增ID
 		if err != nil {
-			fmt.Printf("Get insert id failed, err:%v", err)
+			fmt.Printf("Get insert id failed, err:%v\n", err)
 			return nil, err
 		}
 		m.ID = lastInsertID
@@ -171,12 +171,12 @@ func (m *UserModel) Create(props map[string]interface{}) (*UserModel, error) {
 		result, err = db.Exec(sql, values...)
 	}
 	if err != nil {
-		fmt.Printf("Insert data failed, err:%v", err)
+		fmt.Printf("Insert data failed, err:%v\n", err)
 		return nil, err
 	}
 	lastInsertID, err := result.LastInsertId() //获取插入数据的自增ID
 	if err != nil {
-		fmt.Printf("Get insert id failed, err:%v", err)
+		fmt.Printf("Get insert id failed, err:%v\n", err)
 		return nil, err
 	}
 	return m.Find(lastInsertID)
@@ -199,7 +199,7 @@ func (m *UserModel) Destroy(id int64) error {
 		_, err = db.Exec(sql, id)
 	}
 	if err != nil {
-		fmt.Printf("Delete data failed, err:%v", err)
+		fmt.Printf("Delete data failed, err:%v\n", err)
 		return err
 	}
 	m.ID = 0
@@ -223,9 +223,14 @@ func (m *UserModel) Update(props map[string]interface{}, conds map[string]interf
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
-	_, err := db.Exec(sql, cvs...)
+	var err error
+	if m.Trx != nil {
+		_, err = m.Trx.Exec(sql, cvs...)
+	} else {
+		_, err = db.Exec(sql, cvs...)
+	}
 	if err != nil {
-		fmt.Printf("Update failed, err:%v\n", err)
+		fmt.Printf("Update data failed, err:%v\n", err)
 		return err
 	}
 	return nil
