@@ -1,6 +1,7 @@
 package model
 
 import (
+	. "database/sql"
 	. "go-orm/db"
 	. "go-orm/lib"
 	"strings"
@@ -12,9 +13,45 @@ import (
 type UserModel struct {
 	Datasource string
 	Table      string
+	Trx        *Tx
 	ID         int64
 
 	Name string
+}
+
+func (m *UserModel) Begin() (*Tx, error) {
+	db := DBPool[m.Datasource]["w"]
+	sql := "BEGIN"
+	if GoOrmSqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
+	}
+	tx, err := db.Begin()
+	m.Trx = tx
+	return tx, err
+}
+
+func (m *UserModel) Commit() error {
+	if m.Trx != nil {
+		sql := "COMMIT"
+		if GoOrmSqlLog {
+			fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
+		}
+		return m.Trx.Commit()
+	}
+	m.Trx = nil
+	return nil
+}
+
+func (m *UserModel) Rollback() error {
+	if m.Trx != nil {
+		sql := "ROLLBACK"
+		if GoOrmSqlLog {
+			fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
+		}
+		return m.Trx.Rollback()
+	}
+	m.Trx = nil
+	return nil
 }
 
 func (m *UserModel) Exec(sql string) error {
@@ -126,7 +163,13 @@ func (m *UserModel) Create(props map[string]interface{}) (*UserModel, error) {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, values)
 	}
-	result, err := db.Exec(sql, values...)
+	var result Result
+	var err error
+	if m.Trx != nil {
+		result, err = m.Trx.Exec(sql, values...)
+	} else {
+		result, err = db.Exec(sql, values...)
+	}
 	if err != nil {
 		fmt.Printf("Insert data failed, err:%v", err)
 		return nil, err

@@ -1,6 +1,7 @@
 # GO-ORM Features
 - Auto create table
 - Model & CRUD methods generator
+- Transaction
 - Pagination
 - Connection Pool
 - Write/Read Splitting
@@ -165,5 +166,26 @@ func main() {
 	us6 := User.OrderBy("ID DESC, Name DESC").Where(props2)
 	us7 := User.OrderBy("ID DESC, Name DESC").Offset(0).Limit(10).Where(props2)
 	us8 := User.OrderBy("ID DESC, Name DESC").Page(1, 10).Where(props2)
+
+	// Tx-Commit
+	User.Begin()
+	for i := 0; i < 10; i++ {
+		props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1)}
+		User.Create(props)
+	}
+	User.Destroy(25)
+	User.Commit()
+	u, e = User.Find(30)
+	fmt.Println("[Find]", u, e)
+
+	// Tx-Rollback
+	User.Begin()
+	for i := 0; i < 10; i++ {
+		props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1)}
+		User.Create(props)
+	}
+	User.Rollback()
+	u, e = User.Find(40)
+	fmt.Println("[Find]", u, e)
 }
 ```
