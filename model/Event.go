@@ -264,4 +264,39 @@ func (m *EventModel) Update(props map[string]interface{}, conds map[string]inter
 	return nil
 }
 
+func (m *EventModel) CountAll() int64 {
+	// todo
+	return 0
+}
+
+func (m *EventModel) Count(conds map[string]interface{}) int64 {
+	// todo
+	return 0
+}
+
+func (m *EventModel) All() ([]*EventModel, error) {
+	// todo
+	return nil, nil
+}
+
+func (m *EventModel) OrderBy(o string) *EventModel {
+	// todo
+	return nil
+}
+
+func (m *EventModel) Offset(o int64) *EventModel {
+	// todo
+	return nil
+}
+
+func (m *EventModel) Limit(l int64) *EventModel {
+	// todo
+	return nil
+}
+
+func (m *EventModel) Page(page int64, size int64) ([]*EventModel, error) {
+	// todo
+	return nil, nil
+}
+
 var Event = EventModel{Datasource: "default", Table: "event"}

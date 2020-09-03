@@ -264,4 +264,39 @@ func (m *UserModel) Update(props map[string]interface{}, conds map[string]interf
 	return nil
 }
 
+func (m *UserModel) CountAll() int64 {
+	// todo
+	return 0
+}
+
+func (m *UserModel) Count(conds map[string]interface{}) int64 {
+	// todo
+	return 0
+}
+
+func (m *UserModel) All() ([]*UserModel, error) {
+	// todo
+	return nil, nil
+}
+
+func (m *UserModel) OrderBy(o string) *UserModel {
+	// todo
+	return nil
+}
+
+func (m *UserModel) Offset(o int64) *UserModel {
+	// todo
+	return nil
+}
+
+func (m *UserModel) Limit(l int64) *UserModel {
+	// todo
+	return nil
+}
+
+func (m *UserModel) Page(page int64, size int64) ([]*UserModel, error) {
+	// todo
+	return nil, nil
+}
+
 var User = UserModel{Datasource: "default", Table: "user"}

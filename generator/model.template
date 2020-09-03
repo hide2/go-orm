@@ -265,4 +265,39 @@ func (m *{{.Model}}Model) Update(props map[string]interface{}, conds map[string]
 	return nil
 }
 
+func (m *{{.Model}}Model) CountAll() int64 {
+	// todo
+	return 0
+}
+
+func (m *{{.Model}}Model) Count(conds map[string]interface{}) int64 {
+	// todo
+	return 0
+}
+
+func (m *{{.Model}}Model) All() ([]*{{.Model}}Model, error) {
+	// todo
+	return nil, nil
+}
+
+func (m *{{.Model}}Model) OrderBy(o string) *{{.Model}}Model {
+	// todo
+	return nil
+}
+
+func (m *{{.Model}}Model) Offset(o int64) *{{.Model}}Model {
+	// todo
+	return nil
+}
+
+func (m *{{.Model}}Model) Limit(l int64) *{{.Model}}Model {
+	// todo
+	return nil
+}
+
+func (m *{{.Model}}Model) Page(page int64, size int64) ([]*{{.Model}}Model, error) {
+	// todo
+	return nil, nil
+}
+
 var {{.Model}} = {{.Model}}Model{Datasource: "default", Table: "{{.Table}}"}
