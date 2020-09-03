@@ -52,7 +52,7 @@ func main() {
 
 	// Create
 	for i := 0; i < 20; i++ {
-		props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1)}
+		props := map[string]interface{}{"name": "Dog"}
 		u, _ = User.Create(props)
 		fmt.Println("[Create]", u)
 	}
@@ -84,23 +84,23 @@ func main() {
 	// us8 := User.OrderBy("ID DESC, Name DESC").Page(1, 10).Where(props2)
 
 	// Tx-Commit
-	// User.Begin()
-	// for i := 0; i < 10; i++ {
-	// 	props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1)}
-	// 	User.Create(props)
-	// }
-	// User.Destroy(25)
-	// User.Commit()
-	// u, e = User.Find(30)
-	// fmt.Println("[Find]", u, e)
+	User.Begin()
+	for i := 0; i < 10; i++ {
+		props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1)}
+		User.Create(props)
+	}
+	User.Destroy(25)
+	User.Commit()
+	u, e = User.Find(30)
+	fmt.Println("[Find]", u, e)
 
-	// // Tx-Rollback
-	// User.Begin()
-	// for i := 0; i < 10; i++ {
-	// 	props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1)}
-	// 	User.Create(props)
-	// }
-	// User.Rollback()
-	// u, e = User.Find(40)
-	// fmt.Println("[Find]", u, e)
+	// Tx-Rollback
+	User.Begin()
+	for i := 0; i < 10; i++ {
+		props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1)}
+		User.Create(props)
+	}
+	User.Rollback()
+	u, e = User.Find(40)
+	fmt.Println("[Find]", u, e)
 }
