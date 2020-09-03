@@ -88,6 +88,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	. "go-orm/model"
 )
@@ -146,15 +147,19 @@ func main() {
 
 	// WHERE
 	conds := map[string]interface{}{"name": "Dog"}
-	us := User.Where(conds)
-	fmt.Println("[Where]", us)
+	us, _ := User.Where(conds)
+	for _, v := range us {
+		fmt.Println("[Where]", *v)
+	}
 
 	// UPDATE
 	props2 := map[string]interface{}{"name": "Cat"}
 	conds2 := map[string]interface{}{"name": "Dog"}
 	User.Update(props2, conds2)
-	us2 := User.Where(props2)
-	fmt.Println("[Update]", us2)
+	us2, _ := User.Where(props2)
+	for _, v := range us2 {
+		fmt.Println("[Where]", *v)
+	}
 
 	// COUNT
 	c := User.CountAll()

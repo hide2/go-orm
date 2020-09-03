@@ -16,7 +16,7 @@ type UserModel struct {
 	Trx        *Tx
 	ID         int64
 
-	Name      string
+	Name string
 	CreatedAt time.Time
 }
 
@@ -68,6 +68,7 @@ func (m *UserModel) Exec(sql string) error {
 }
 
 func (m *UserModel) CreateTable() error {
+	db := DBPool[m.Datasource]["w"]
 	sql := `CREATE TABLE user (
 		id BIGINT AUTO_INCREMENT,
 
@@ -75,7 +76,6 @@ func (m *UserModel) CreateTable() error {
 		created_at DATETIME,
 		PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
-	db := DBPool[m.Datasource]["w"]
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
@@ -92,8 +92,8 @@ func (m *UserModel) New() *UserModel {
 }
 
 func (m *UserModel) Find(id int64) (*UserModel, error) {
-	sql := "SELECT * FROM user WHERE id = ?"
 	db := DBPool[m.Datasource]["r"]
+	sql := "SELECT * FROM user WHERE id = ?"
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
 	}
@@ -112,12 +112,12 @@ func (m *UserModel) Save() (*UserModel, error) {
 		conds := map[string]interface{}{"id": m.ID}
 		uprops := make(map[string]interface{})
 		for k, v := range props {
-			if k != "Datasource" && k != "Table" && k != "ID" {
+			if k != "Datasource" && k != "Table" && k != "Trx" && k != "ID" {
 				uprops[Underscore(k)] = v
 			}
 		}
 		return m, m.Update(uprops, conds)
-		// Create
+	// Create
 	} else {
 		sql := "INSERT INTO user(name,created_at) VALUES(?,?)"
 		if GoOrmSqlLog {
@@ -138,15 +138,42 @@ func (m *UserModel) Save() (*UserModel, error) {
 	return m, nil
 }
 
-func (m *UserModel) Where(conds map[string]interface{}) []*UserModel {
-	// todo
-	ms := []*UserModel{}
-	return ms
+func (m *UserModel) Where(conds map[string]interface{}) ([]*UserModel, error) {
+	db := DBPool[m.Datasource]["r"]
+	wherestr := make([]string, 0)
+	cvs := make([]interface{}, 0)
+	for k, v := range conds {
+		wherestr = append(wherestr, k + "=?")
+		cvs = append(cvs, v)
+	}
+	sql := fmt.Sprintf("SELECT * FROM user WHERE %s", strings.Join(wherestr, " AND "))
+	if GoOrmSqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
+	}
+	rows, err := db.Query(sql, cvs...)
+	defer func() {
+		if rows != nil {
+			rows.Close() //关闭掉未scan的sql连接
+		}
+	}()
+	if err != nil {
+		fmt.Printf("Query data failed, err:%v\n", err)
+		return nil, err
+	}
+	ms := make([]*UserModel, 0)
+	for rows.Next() {
+		m = new(UserModel)
+		err = rows.Scan(&m.ID, &m.Name, &m.CreatedAt) //不scan会导致连接不释放
+		if err != nil {
+			return nil, err
+		}
+		ms = append(ms, m)
+	}
+	return ms, nil
 }
 
 func (m *UserModel) Create(props map[string]interface{}) (*UserModel, error) {
 	db := DBPool[m.Datasource]["w"]
-
 	keys := make([]string, 0)
 	values := make([]interface{}, 0)
 	for k, v := range props {
@@ -213,11 +240,11 @@ func (m *UserModel) Update(props map[string]interface{}, conds map[string]interf
 	wherestr := make([]string, 0)
 	cvs := make([]interface{}, 0)
 	for k, v := range props {
-		setstr = append(setstr, k+"=?")
+		setstr = append(setstr, k + "=?")
 		cvs = append(cvs, v)
 	}
 	for k, v := range conds {
-		wherestr = append(wherestr, k+"=?")
+		wherestr = append(wherestr, k + "=?")
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("UPDATE user SET %s WHERE %s", strings.Join(setstr, ", "), strings.Join(wherestr, " AND "))
