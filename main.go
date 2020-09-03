@@ -37,12 +37,20 @@ func main() {
 	u.Delete()
 	User.Destroy(1)
 
+	// Exec SQL
+	fmt.Println("[Drop Table user]")
+	User.Exec("DROP TABLE IF EXISTS user")
+
+	// Create Table
+	fmt.Println("[Create Table user]")
+	User.CreateTable()
+
 	// Create
-	props := map[string]interface{}{"name": "Dog"}
-	u, _ = User.Create(props)
-	u, _ = User.Create(props)
-	u, _ = User.Create(props)
-	fmt.Println("[Create]", u)
+	for i := 0; i < 30; i++ {
+		props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1)}
+		u, _ = User.Create(props)
+		fmt.Println("[Create]", u)
+	}
 
 	// WHERE
 	conds := map[string]interface{}{"name": "Dog"}
@@ -55,4 +63,18 @@ func main() {
 	User.Update(props2, conds2)
 	us2 := User.Where(props2)
 	fmt.Println("[Update]", us2)
+
+	// COUNT
+	// c := User.CountAll()
+	// fmt.Println("[CountAll]", c)
+	// c = User.Count(props2)
+	// fmt.Println("[Count]", c)
+
+	// OrderBy&Limit&Paginate
+	// us3 := User.All()
+	// us4 := User.OrderBy("ID DESC").All()
+	// us5 := User.OrderBy("ID DESC, Name DESC").Where(props2)
+	// us6 := User.OrderBy("ID DESC, Name DESC").Where(props2)
+	// us7 := User.OrderBy("ID DESC, Name DESC").Offset(0).Limit(10).Where(props2)
+	// us8 := User.OrderBy("ID DESC, Name DESC").Page(1, 10).Where(props2)
 }
