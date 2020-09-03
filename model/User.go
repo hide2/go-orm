@@ -183,8 +183,7 @@ func (m *UserModel) Create(props map[string]interface{}) (*UserModel, error) {
 }
 
 func (m *UserModel) Delete() error {
-	// todo
-	return nil
+	return m.Destroy(m.ID)
 }
 
 func (m *UserModel) Destroy(id int64) error {

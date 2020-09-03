@@ -186,8 +186,7 @@ func (m *{{.Model}}Model) Create(props map[string]interface{}) (*{{.Model}}Model
 }
 
 func (m *{{.Model}}Model) Delete() error {
-	// todo
-	return nil
+	return m.Destroy(m.ID)
 }
 
 func (m *{{.Model}}Model) Destroy(id int64) error {

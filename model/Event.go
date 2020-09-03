@@ -185,8 +185,7 @@ func (m *EventModel) Create(props map[string]interface{}) (*EventModel, error) {
 }
 
 func (m *EventModel) Delete() error {
-	// todo
-	return nil
+	return m.Destroy(m.ID)
 }
 
 func (m *EventModel) Destroy(id int64) error {

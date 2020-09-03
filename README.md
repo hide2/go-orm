@@ -124,7 +124,8 @@ func main() {
 
 	// D
 	u.Delete()
-	User.Destroy(1)
+	u, _ = User.Find(1)
+	fmt.Println("[After Delete Find(1)]", u)
 
 	// Exec SQL
 	fmt.Println("[Drop Table user]")
