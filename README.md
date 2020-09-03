@@ -136,8 +136,8 @@ func main() {
 	User.CreateTable()
 
 	// Create
-	for i := 0; i < 30; i++ {
-		props := map[string]interface{}{"name": fmt.Sprintf("%s%d", "Dog", i+1)}
+	for i := 0; i < 20; i++ {
+		props := map[string]interface{}{"name": "Dog"}
 		u, _ = User.Create(props)
 		fmt.Println("[Create]", u)
 	}
