@@ -8,7 +8,21 @@
 - Auto/Customized mapping of Model and datasource/table
 - SQL log & Slow SQL log for profiling
 
-# Generator
+# Usage
+Define Datasources in datasource.yml
+``` yml
+datasources:
+  - name: default
+    write: root:root@tcp(127.0.0.1:3306)/my_db_0
+    read: root:root@tcp(127.0.0.1:3306)/my_db_0
+
+  - name: ds_2
+    write: root:root@tcp(127.0.0.1:3306)/my_db_0
+    read: root:root@tcp(127.0.0.1:3306)/my_db_0
+
+sql_log: true
+slow_sql_log: false
+```
 Define Models in model.yml
 ``` yml
 models:

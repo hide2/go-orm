@@ -12,6 +12,8 @@ import (
 
 type Datasources struct {
 	Datasources []Datasource `yaml:"datasources,flow"`
+	SqlLog      bool         `yaml:"sql_log"`
+	SlowSqlLog  bool         `yaml:"slow_sql_log"`
 }
 
 type Datasource struct {
@@ -22,6 +24,9 @@ type Datasource struct {
 
 var DBPool = make(map[string]map[string]*sql.DB)
 
+var SqlLog = false
+var SlowSqlLog = false
+
 // Init DBPool
 func init() {
 	f, _ := ioutil.ReadFile("datasource.yml")
@@ -30,6 +35,8 @@ func init() {
 	if err != nil {
 		fmt.Println("error:", err)
 	}
+	SqlLog = dss.SqlLog
+	SlowSqlLog = dss.SlowSqlLog
 	for _, ds := range dss.Datasources {
 		wdb, err := sql.Open("mysql", ds.Write)
 		if err != nil {

@@ -4,9 +4,9 @@ import (
 	. "go-orm/db"
 	. "go-orm/lib"
 	"strings"
+	"time"
 
 	"fmt"
-	"time"
 )
 
 type EventModel struct {
@@ -20,6 +20,9 @@ type EventModel struct {
 
 func (m *EventModel) Exec(sql string) error {
 	db := DBPool[m.Datasource]["w"]
+	if SqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
+	}
 	if _, err := db.Exec(sql); err != nil {
 		fmt.Println("Execute sql failed:", err)
 		return err
@@ -36,6 +39,9 @@ func (m *EventModel) CreateTable() error {
 		PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
 	db := DBPool[m.Datasource]["w"]
+	if SqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
+	}
 	if _, err := db.Exec(sql); err != nil {
 		fmt.Println("Create table failed:", err)
 		return err
@@ -75,6 +81,9 @@ func (m *EventModel) Save() (*EventModel, error) {
 	// Create
 	} else {
 		sql := "INSERT INTO event(name,created_at) VALUES(?,?)"
+		if SqlLog {
+			fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, m.Name, m.CreatedAt)
+		}
 		result, err := db.Exec(sql, m.Name, m.CreatedAt)
 		if err != nil {
 			fmt.Printf("Insert data failed, err:%v", err)
@@ -113,6 +122,9 @@ func (m *EventModel) Create(props map[string]interface{}) (*EventModel, error) {
 	ph := strings.Join(phs, ",")
 	sql := fmt.Sprintf("INSERT INTO event(%s) VALUES(%s)", cstr, ph)
 
+	if SqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, values)
+	}
 	result, err := db.Exec(sql, values...)
 	if err != nil {
 		fmt.Printf("Insert data failed, err:%v", err)
@@ -151,6 +163,9 @@ func (m *EventModel) Update(props map[string]interface{}, conds map[string]inter
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("UPDATE event SET %s WHERE %s", strings.Join(setstr, ", "), strings.Join(wherestr, " AND "))
+	if SqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
+	}
 	_, err := db.Exec(sql, cvs...)
 	if err != nil {
 		fmt.Printf("Update failed, err:%v\n", err)

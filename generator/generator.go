@@ -59,7 +59,7 @@ func main() {
 					c = "BIGINT"
 				} else if c == "time.Time" {
 					c = "DATETIME"
-					imports = append(imports, "time")
+					// imports = append(imports, "time")
 				}
 				columns = append(columns, c)
 			} else {

@@ -4,6 +4,7 @@ import (
 	. "go-orm/db"
 	. "go-orm/lib"
 	"strings"
+	"time"
 
 	"fmt"
 )
@@ -18,6 +19,9 @@ type UserModel struct {
 
 func (m *UserModel) Exec(sql string) error {
 	db := DBPool[m.Datasource]["w"]
+	if SqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
+	}
 	if _, err := db.Exec(sql); err != nil {
 		fmt.Println("Execute sql failed:", err)
 		return err
@@ -33,6 +37,9 @@ func (m *UserModel) CreateTable() error {
 		PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
 	db := DBPool[m.Datasource]["w"]
+	if SqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
+	}
 	if _, err := db.Exec(sql); err != nil {
 		fmt.Println("Create table failed:", err)
 		return err
@@ -72,6 +79,9 @@ func (m *UserModel) Save() (*UserModel, error) {
 	// Create
 	} else {
 		sql := "INSERT INTO user(name) VALUES(?)"
+		if SqlLog {
+			fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, m.Name)
+		}
 		result, err := db.Exec(sql, m.Name)
 		if err != nil {
 			fmt.Printf("Insert data failed, err:%v", err)
@@ -110,6 +120,9 @@ func (m *UserModel) Create(props map[string]interface{}) (*UserModel, error) {
 	ph := strings.Join(phs, ",")
 	sql := fmt.Sprintf("INSERT INTO user(%s) VALUES(%s)", cstr, ph)
 
+	if SqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, values)
+	}
 	result, err := db.Exec(sql, values...)
 	if err != nil {
 		fmt.Printf("Insert data failed, err:%v", err)
@@ -148,6 +161,9 @@ func (m *UserModel) Update(props map[string]interface{}, conds map[string]interf
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("UPDATE user SET %s WHERE %s", strings.Join(setstr, ", "), strings.Join(wherestr, " AND "))
+	if SqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
+	}
 	_, err := db.Exec(sql, cvs...)
 	if err != nil {
 		fmt.Printf("Update failed, err:%v\n", err)
