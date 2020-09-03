@@ -190,8 +190,22 @@ func (m *EventModel) Delete() error {
 }
 
 func (m *EventModel) Destroy(id int64) error {
-	// sql := "DELETE FROM event WHERE id = ?"
-	// todo
+	db := DBPool[m.Datasource]["w"]
+	sql := "DELETE FROM event WHERE id = ?"
+	if GoOrmSqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
+	}
+	var err error
+	if m.Trx != nil {
+		_, err = m.Trx.Exec(sql, id)
+	} else {
+		_, err = db.Exec(sql, id)
+	}
+	if err != nil {
+		fmt.Printf("Delete data failed, err:%v", err)
+		return err
+	}
+	m.ID = 0
 	return nil
 }
 
