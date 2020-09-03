@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	. "go-orm/lib"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -24,12 +25,6 @@ type ModelAttr struct {
 	Columns    []string
 	InsertSQL  string
 	InsertArgs string
-}
-
-func camelize(str string) string {
-	str = strings.Replace(str, "_", " ", -1)
-	str = strings.Title(str)
-	return strings.Replace(str, " ", "", -1)
 }
 
 func main() {
@@ -54,7 +49,7 @@ func main() {
 		imports = append(imports, "fmt")
 		for _, v := range j {
 			if v.Key != "model" {
-				attrs = append(attrs, camelize(v.Key.(string)))
+				attrs = append(attrs, Camelize(v.Key.(string)))
 				keys = append(keys, v.Key.(string))
 				values = append(values, v.Value.(string))
 				c := v.Value.(string)

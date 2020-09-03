@@ -33,6 +33,9 @@ func main() {
 	u.Save()
 	fmt.Println("[Update]", u)
 
+	u, _ = User.Find(1)
+	fmt.Println("[Find(1)]", u)
+
 	// D
 	u.Delete()
 	User.Destroy(1)

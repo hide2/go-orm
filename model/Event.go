@@ -2,6 +2,7 @@ package model
 
 import (
 	. "go-orm/db"
+	. "go-orm/lib"
 	"strings"
 
 	"fmt"
@@ -62,7 +63,15 @@ func (m *EventModel) Save() (*EventModel, error) {
 	db := DBPool[m.Datasource]["w"]
 	// Update
 	if m.ID > 0 {
-		// todo
+		props := StructToMap(*m)
+		conds := map[string]interface{}{"id": m.ID}
+		uprops := make(map[string]interface{})
+		for k, v := range props {
+			if k != "Datasource" && k != "Table" && k != "ID" {
+				uprops[Underscore(k)] = v
+			}
+		}
+		return m, m.Update(uprops, conds)
 	// Create
 	} else {
 		sql := "INSERT INTO event(name,created_at) VALUES(?,?)"
@@ -129,7 +138,24 @@ func (m *EventModel) Destroy(id int64) error {
 }
 
 func (m *EventModel) Update(props map[string]interface{}, conds map[string]interface{}) error {
-	// todo
+	db := DBPool[m.Datasource]["w"]
+	setstr := make([]string, 0)
+	wherestr := make([]string, 0)
+	cvs := make([]interface{}, 0)
+	for k, v := range props {
+		setstr = append(setstr, k + "=?")
+		cvs = append(cvs, v)
+	}
+	for k, v := range conds {
+		wherestr = append(wherestr, k + "=?")
+		cvs = append(cvs, v)
+	}
+	sql := fmt.Sprintf("UPDATE event SET %s WHERE %s", strings.Join(setstr, ", "), strings.Join(wherestr, " AND "))
+	_, err := db.Exec(sql, cvs...)
+	if err != nil {
+		fmt.Printf("Update failed, err:%v\n", err)
+		return err
+	}
 	return nil
 }
 
