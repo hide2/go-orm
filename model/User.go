@@ -55,6 +55,9 @@ func (m *UserModel) New() *UserModel {
 func (m *UserModel) Find(id int64) (*UserModel, error) {
 	sql := "SELECT * FROM user WHERE id = ?"
 	db := DBPool[m.Datasource]["r"]
+	if SqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
+	}
 	row := db.QueryRow(sql, id)
 	// todo
 	if err := row.Scan(&m.ID, &m.Name); err != nil {

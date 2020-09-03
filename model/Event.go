@@ -57,6 +57,9 @@ func (m *EventModel) New() *EventModel {
 func (m *EventModel) Find(id int64) (*EventModel, error) {
 	sql := "SELECT * FROM event WHERE id = ?"
 	db := DBPool[m.Datasource]["r"]
+	if SqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
+	}
 	row := db.QueryRow(sql, id)
 	// todo
 	if err := row.Scan(&m.ID, &m.Name); err != nil {
