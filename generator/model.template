@@ -152,6 +152,15 @@ func (m *{{.Model}}Model) Where(conds map[string]interface{}) ([]*{{.Model}}Mode
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("SELECT * FROM {{.Table}} WHERE %s", strings.Join(wherestr, " AND "))
+	if m.OdB != "" {
+		sql = sql + " ORDER BY " + m.OdB
+	}
+	if m.Lmt > 0 {
+		sql = sql + fmt.Sprintf(" LIMIT %d", m.Lmt)
+	}
+	if m.Ofs > 0 {
+		sql = sql + fmt.Sprintf(" OFFSET %d", m.Ofs)
+	}
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
@@ -355,10 +364,10 @@ func (m *{{.Model}}Model) Limit(l int) *{{.Model}}Model {
 	return m
 }
 
-func (m *{{.Model}}Model) Page(page int, size int) ([]*{{.Model}}Model, error) {
+func (m *{{.Model}}Model) Page(page int, size int) *{{.Model}}Model {
 	m.Ofs = (page - 1)*size
 	m.Lmt = size
-	return nil, nil
+	return m
 }
 
 var {{.Model}} = {{.Model}}Model{Datasource: "default", Table: "{{.Table}}"}

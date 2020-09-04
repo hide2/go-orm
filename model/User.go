@@ -151,6 +151,15 @@ func (m *UserModel) Where(conds map[string]interface{}) ([]*UserModel, error) {
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("SELECT * FROM user WHERE %s", strings.Join(wherestr, " AND "))
+	if m.OdB != "" {
+		sql = sql + " ORDER BY " + m.OdB
+	}
+	if m.Lmt > 0 {
+		sql = sql + fmt.Sprintf(" LIMIT %d", m.Lmt)
+	}
+	if m.Ofs > 0 {
+		sql = sql + fmt.Sprintf(" OFFSET %d", m.Ofs)
+	}
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
@@ -354,10 +363,10 @@ func (m *UserModel) Limit(l int) *UserModel {
 	return m
 }
 
-func (m *UserModel) Page(page int, size int) ([]*UserModel, error) {
+func (m *UserModel) Page(page int, size int) *UserModel {
 	m.Ofs = (page - 1)*size
 	m.Lmt = size
-	return nil, nil
+	return m
 }
 
 var User = UserModel{Datasource: "default", Table: "user"}

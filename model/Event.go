@@ -151,6 +151,15 @@ func (m *EventModel) Where(conds map[string]interface{}) ([]*EventModel, error) 
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("SELECT * FROM event WHERE %s", strings.Join(wherestr, " AND "))
+	if m.OdB != "" {
+		sql = sql + " ORDER BY " + m.OdB
+	}
+	if m.Lmt > 0 {
+		sql = sql + fmt.Sprintf(" LIMIT %d", m.Lmt)
+	}
+	if m.Ofs > 0 {
+		sql = sql + fmt.Sprintf(" OFFSET %d", m.Ofs)
+	}
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
@@ -354,10 +363,10 @@ func (m *EventModel) Limit(l int) *EventModel {
 	return m
 }
 
-func (m *EventModel) Page(page int, size int) ([]*EventModel, error) {
+func (m *EventModel) Page(page int, size int) *EventModel {
 	m.Ofs = (page - 1)*size
 	m.Lmt = size
-	return nil, nil
+	return m
 }
 
 var Event = EventModel{Datasource: "default", Table: "event"}

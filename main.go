@@ -86,9 +86,14 @@ func main() {
 	for _, v := range us4 {
 		fmt.Println("[OrderBy]", *v)
 	}
-	// us5 := User.OrderBy("ID DESC, Name DESC").Where(props2)
-	// us6 := User.OrderBy("ID DESC, Name DESC").Offset(0).Limit(10).Where(props2)
-	// us8 := User.OrderBy("ID DESC, Name DESC").Page(1, 10).Where(props2)
+	us5, _ := User.OrderBy("ID ASC, Name ASC").Offset(0).Limit(5).Where(props2)
+	for _, v := range us5 {
+		fmt.Println("[Offset/Limit]", *v)
+	}
+	us6, _ := User.OrderBy("ID ASC, Name ASC").Page(1, 10).Where(props2)
+	for _, v := range us6 {
+		fmt.Println("[Page]", *v)
+	}
 
 	// Tx-Commit
 	User.Begin()
