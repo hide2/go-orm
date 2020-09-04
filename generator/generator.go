@@ -1,4 +1,4 @@
-package main
+package generator
 
 import (
 	"bytes"
@@ -27,10 +27,6 @@ type ModelAttr struct {
 	InsertSQL  string
 	InsertArgs string
 	ScanStr    string
-}
-
-func main() {
-	Gen()
 }
 
 func Gen() {

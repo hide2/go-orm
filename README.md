@@ -37,7 +37,7 @@ models:
 ```
 Generate Model go files
 ```
-go run generator/generator.go -file model.yml
+go run gen.go
 ```
 Which will generate Model files
 
