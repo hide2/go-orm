@@ -11,6 +11,10 @@ import (
 )
 
 type UserModel struct {
+	OdB        string
+	Lmt        int
+	Ofs        int
+	
 	Datasource string
 	Table      string
 	Trx        *Tx
@@ -112,7 +116,7 @@ func (m *UserModel) Save() (*UserModel, error) {
 		conds := map[string]interface{}{"id": m.ID}
 		uprops := make(map[string]interface{})
 		for k, v := range props {
-			if k != "Datasource" && k != "Table" && k != "Trx" && k != "ID" {
+			if k != "OdB" && k != "Lmt" && k != "Ofs" && k != "Datasource" && k != "Table" && k != "Trx" && k != "ID" {
 				uprops[Underscore(k)] = v
 			}
 		}
@@ -264,38 +268,95 @@ func (m *UserModel) Update(props map[string]interface{}, conds map[string]interf
 	return nil
 }
 
-func (m *UserModel) CountAll() int64 {
-	// todo
-	return 0
+func (m *UserModel) CountAll() (int, error) {
+	db := DBPool[m.Datasource]["r"]
+	sql := "SELECT count(1) FROM user"
+	if GoOrmSqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
+	}
+	row := db.QueryRow(sql)
+	var c int
+	if err := row.Scan(&c); err != nil {
+		return 0, err
+	}
+	return c, nil
 }
 
-func (m *UserModel) Count(conds map[string]interface{}) int64 {
-	// todo
-	return 0
+func (m *UserModel) Count(conds map[string]interface{}) (int, error) {
+	db := DBPool[m.Datasource]["r"]
+	wherestr := make([]string, 0)
+	cvs := make([]interface{}, 0)
+	for k, v := range conds {
+		wherestr = append(wherestr, k + "=?")
+		cvs = append(cvs, v)
+	}
+	sql := fmt.Sprintf("SELECT count(1) FROM user WHERE %s", strings.Join(wherestr, " AND "))
+	if GoOrmSqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
+	}
+	row := db.QueryRow(sql, cvs...)
+	var c int
+	if err := row.Scan(&c); err != nil {
+		return 0, err
+	}
+	return c, nil
 }
 
 func (m *UserModel) All() ([]*UserModel, error) {
-	// todo
-	return nil, nil
+	db := DBPool[m.Datasource]["r"]
+	sql := "SELECT * FROM user"
+	if m.OdB != "" {
+		sql = sql + " ORDER BY " + m.OdB
+	}
+	if m.Lmt > 0 {
+		sql = sql + fmt.Sprintf(" LIMIT %d", m.Lmt)
+	}
+	if m.Ofs > 0 {
+		sql = sql + fmt.Sprintf(" OFFSET %d", m.Ofs)
+	}
+	if GoOrmSqlLog {
+		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
+	}
+	rows, err := db.Query(sql)
+	defer func() {
+		if rows != nil {
+			rows.Close() //关闭掉未scan的sql连接
+		}
+	}()
+	if err != nil {
+		fmt.Printf("Query data failed, err:%v\n", err)
+		return nil, err
+	}
+	ms := make([]*UserModel, 0)
+	for rows.Next() {
+		m = new(UserModel)
+		err = rows.Scan(&m.ID, &m.Name, &m.CreatedAt) //不scan会导致连接不释放
+		if err != nil {
+			return nil, err
+		}
+		ms = append(ms, m)
+	}
+	return ms, nil
 }
 
 func (m *UserModel) OrderBy(o string) *UserModel {
-	// todo
-	return nil
+	m.OdB = o
+	return m
 }
 
-func (m *UserModel) Offset(o int64) *UserModel {
-	// todo
-	return nil
+func (m *UserModel) Offset(o int) *UserModel {
+	m.Ofs = o
+	return m
 }
 
-func (m *UserModel) Limit(l int64) *UserModel {
-	// todo
-	return nil
+func (m *UserModel) Limit(l int) *UserModel {
+	m.Lmt = l
+	return m
 }
 
-func (m *UserModel) Page(page int64, size int64) ([]*UserModel, error) {
-	// todo
+func (m *UserModel) Page(page int, size int) ([]*UserModel, error) {
+	m.Ofs = (page - 1)*size
+	m.Lmt = size
 	return nil, nil
 }
 

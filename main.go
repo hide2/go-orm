@@ -71,22 +71,23 @@ func main() {
 	conds2 := map[string]interface{}{"name": "Dog"}
 	User.Update(props2, conds2)
 	us2, _ := User.Where(props2)
-	for _, v := range us2 {
-		fmt.Println("[Where]", *v)
-	}
+	fmt.Println("[Update]", len(us2))
 
 	// COUNT
-	// c := User.CountAll()
-	// fmt.Println("[CountAll]", c)
-	// c = User.Count(props2)
-	// fmt.Println("[Count]", c)
+	c, _ := User.CountAll()
+	fmt.Println("[CountAll]", c)
+	c, _ = User.Count(props2)
+	fmt.Println("[Count]", c)
 
 	// OrderBy&Limit&Paginate
-	// us3 := User.All()
-	// us4 := User.OrderBy("ID DESC").All()
+	us3, _ := User.All()
+	fmt.Println("[All]", len(us3))
+	us4, _ := User.OrderBy("ID DESC").Offset(2).Limit(3).All()
+	for _, v := range us4 {
+		fmt.Println("[OrderBy]", *v)
+	}
 	// us5 := User.OrderBy("ID DESC, Name DESC").Where(props2)
-	// us6 := User.OrderBy("ID DESC, Name DESC").Where(props2)
-	// us7 := User.OrderBy("ID DESC, Name DESC").Offset(0).Limit(10).Where(props2)
+	// us6 := User.OrderBy("ID DESC, Name DESC").Offset(0).Limit(10).Where(props2)
 	// us8 := User.OrderBy("ID DESC, Name DESC").Page(1, 10).Where(props2)
 
 	// Tx-Commit
