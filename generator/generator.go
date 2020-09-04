@@ -30,6 +30,10 @@ type ModelAttr struct {
 }
 
 func main() {
+	Gen()
+}
+
+func Gen() {
 	flag.Parse()
 	for i := 0; i != flag.NArg(); i++ {
 		fmt.Printf("arg[%d]=%s\n", i, flag.Arg(i))
