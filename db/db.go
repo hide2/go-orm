@@ -13,7 +13,7 @@ import (
 type Datasources struct {
 	Datasources []Datasource `yaml:"datasources,flow"`
 	SqlLog      bool         `yaml:"sql_log"`
-	SlowSqlLog  bool         `yaml:"slow_sql_log"`
+	SlowSqlLog  int          `yaml:"slow_sql_log"`
 }
 
 type Datasource struct {
@@ -25,7 +25,7 @@ type Datasource struct {
 var DBPool = make(map[string]map[string]*sql.DB)
 
 var GoOrmSqlLog = false
-var GoOrmSlowSqlLog = false
+var GoOrmSlowSqlLog = 0
 
 // Init DBPool
 func init() {

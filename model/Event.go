@@ -64,9 +64,14 @@ func (m *EventModel) Exec(sql string) error {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
+	st := time.Now().UnixNano() / 1e6
 	if _, err := db.Exec(sql); err != nil {
 		fmt.Println("Execute sql failed:", err)
 		return err
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return nil
 }
@@ -83,9 +88,14 @@ func (m *EventModel) CreateTable() error {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
+	st := time.Now().UnixNano() / 1e6
 	if _, err := db.Exec(sql); err != nil {
 		fmt.Println("Create table failed:", err)
 		return err
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return nil
 }
@@ -101,9 +111,14 @@ func (m *EventModel) Find(id int64) (*EventModel, error) {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
 	}
+	st := time.Now().UnixNano() / 1e6
 	row := db.QueryRow(sql, id)
 	if err := row.Scan(&m.ID, &m.Name, &m.CreatedAt); err != nil {
 		return nil, err
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return m, nil
 }
@@ -127,6 +142,7 @@ func (m *EventModel) Save() (*EventModel, error) {
 		if GoOrmSqlLog {
 			fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, m.Name, m.CreatedAt)
 		}
+		st := time.Now().UnixNano() / 1e6
 		result, err := db.Exec(sql, m.Name, m.CreatedAt)
 		if err != nil {
 			fmt.Printf("Insert data failed, err:%v\n", err)
@@ -138,6 +154,10 @@ func (m *EventModel) Save() (*EventModel, error) {
 			return nil, err
 		}
 		m.ID = lastInsertID
+		e := time.Now().UnixNano()/1e6 - st
+		if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+			fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
+		}
 	}
 	return m, nil
 }
@@ -163,6 +183,7 @@ func (m *EventModel) Where(conds map[string]interface{}) ([]*EventModel, error) 
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
+	st := time.Now().UnixNano() / 1e6
 	rows, err := db.Query(sql, cvs...)
 	defer func() {
 		if rows != nil {
@@ -181,6 +202,10 @@ func (m *EventModel) Where(conds map[string]interface{}) ([]*EventModel, error) 
 			return nil, err
 		}
 		ms = append(ms, m)
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return ms, nil
 }
@@ -204,6 +229,7 @@ func (m *EventModel) Create(props map[string]interface{}) (*EventModel, error) {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, values)
 	}
+	st := time.Now().UnixNano() / 1e6
 	var result Result
 	var err error
 	if m.Trx != nil {
@@ -220,6 +246,10 @@ func (m *EventModel) Create(props map[string]interface{}) (*EventModel, error) {
 		fmt.Printf("Get insert id failed, err:%v\n", err)
 		return nil, err
 	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
+	}
 	return m.Find(lastInsertID)
 }
 
@@ -233,6 +263,7 @@ func (m *EventModel) Destroy(id int64) error {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
 	}
+	st := time.Now().UnixNano() / 1e6
 	var err error
 	if m.Trx != nil {
 		_, err = m.Trx.Exec(sql, id)
@@ -244,6 +275,10 @@ func (m *EventModel) Destroy(id int64) error {
 		return err
 	}
 	m.ID = 0
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
+	}
 	return nil
 }
 
@@ -264,6 +299,7 @@ func (m *EventModel) Update(props map[string]interface{}, conds map[string]inter
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
+	st := time.Now().UnixNano() / 1e6
 	var err error
 	if m.Trx != nil {
 		_, err = m.Trx.Exec(sql, cvs...)
@@ -274,6 +310,10 @@ func (m *EventModel) Update(props map[string]interface{}, conds map[string]inter
 		fmt.Printf("Update data failed, err:%v\n", err)
 		return err
 	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
+	}
 	return nil
 }
 
@@ -283,10 +323,15 @@ func (m *EventModel) CountAll() (int, error) {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
+	st := time.Now().UnixNano() / 1e6
 	row := db.QueryRow(sql)
 	var c int
 	if err := row.Scan(&c); err != nil {
 		return 0, err
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return c, nil
 }
@@ -303,10 +348,15 @@ func (m *EventModel) Count(conds map[string]interface{}) (int, error) {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
+	st := time.Now().UnixNano() / 1e6
 	row := db.QueryRow(sql, cvs...)
 	var c int
 	if err := row.Scan(&c); err != nil {
 		return 0, err
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return c, nil
 }
@@ -326,6 +376,7 @@ func (m *EventModel) All() ([]*EventModel, error) {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
+	st := time.Now().UnixNano() / 1e6
 	rows, err := db.Query(sql)
 	defer func() {
 		if rows != nil {
@@ -344,6 +395,10 @@ func (m *EventModel) All() ([]*EventModel, error) {
 			return nil, err
 		}
 		ms = append(ms, m)
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return ms, nil
 }

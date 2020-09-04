@@ -11,16 +11,16 @@ import (
 )
 
 type UserModel struct {
-	OdB        string
-	Lmt        int
-	Ofs        int
-	
+	OdB string
+	Lmt int
+	Ofs int
+
 	Datasource string
 	Table      string
 	Trx        *Tx
 	ID         int64
 
-	Name string
+	Name      string
 	CreatedAt time.Time
 }
 
@@ -64,9 +64,14 @@ func (m *UserModel) Exec(sql string) error {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
+	st := time.Now().UnixNano() / 1e6
 	if _, err := db.Exec(sql); err != nil {
 		fmt.Println("Execute sql failed:", err)
 		return err
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return nil
 }
@@ -83,9 +88,14 @@ func (m *UserModel) CreateTable() error {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
+	st := time.Now().UnixNano() / 1e6
 	if _, err := db.Exec(sql); err != nil {
 		fmt.Println("Create table failed:", err)
 		return err
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return nil
 }
@@ -101,9 +111,14 @@ func (m *UserModel) Find(id int64) (*UserModel, error) {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
 	}
+	st := time.Now().UnixNano() / 1e6
 	row := db.QueryRow(sql, id)
 	if err := row.Scan(&m.ID, &m.Name, &m.CreatedAt); err != nil {
 		return nil, err
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return m, nil
 }
@@ -121,12 +136,13 @@ func (m *UserModel) Save() (*UserModel, error) {
 			}
 		}
 		return m, m.Update(uprops, conds)
-	// Create
+		// Create
 	} else {
 		sql := "INSERT INTO user(name,created_at) VALUES(?,?)"
 		if GoOrmSqlLog {
 			fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, m.Name, m.CreatedAt)
 		}
+		st := time.Now().UnixNano() / 1e6
 		result, err := db.Exec(sql, m.Name, m.CreatedAt)
 		if err != nil {
 			fmt.Printf("Insert data failed, err:%v\n", err)
@@ -138,6 +154,11 @@ func (m *UserModel) Save() (*UserModel, error) {
 			return nil, err
 		}
 		m.ID = lastInsertID
+		e := time.Now().UnixNano()/1e6 - st
+		fmt.Println(st, time.Now().UnixNano()/1e6)
+		if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+			fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
+		}
 	}
 	return m, nil
 }
@@ -147,7 +168,7 @@ func (m *UserModel) Where(conds map[string]interface{}) ([]*UserModel, error) {
 	wherestr := make([]string, 0)
 	cvs := make([]interface{}, 0)
 	for k, v := range conds {
-		wherestr = append(wherestr, k + "=?")
+		wherestr = append(wherestr, k+"=?")
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("SELECT * FROM user WHERE %s", strings.Join(wherestr, " AND "))
@@ -163,6 +184,7 @@ func (m *UserModel) Where(conds map[string]interface{}) ([]*UserModel, error) {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
+	st := time.Now().UnixNano() / 1e6
 	rows, err := db.Query(sql, cvs...)
 	defer func() {
 		if rows != nil {
@@ -181,6 +203,10 @@ func (m *UserModel) Where(conds map[string]interface{}) ([]*UserModel, error) {
 			return nil, err
 		}
 		ms = append(ms, m)
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return ms, nil
 }
@@ -204,6 +230,7 @@ func (m *UserModel) Create(props map[string]interface{}) (*UserModel, error) {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, values)
 	}
+	st := time.Now().UnixNano() / 1e6
 	var result Result
 	var err error
 	if m.Trx != nil {
@@ -220,6 +247,10 @@ func (m *UserModel) Create(props map[string]interface{}) (*UserModel, error) {
 		fmt.Printf("Get insert id failed, err:%v\n", err)
 		return nil, err
 	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
+	}
 	return m.Find(lastInsertID)
 }
 
@@ -233,6 +264,7 @@ func (m *UserModel) Destroy(id int64) error {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, id)
 	}
+	st := time.Now().UnixNano() / 1e6
 	var err error
 	if m.Trx != nil {
 		_, err = m.Trx.Exec(sql, id)
@@ -244,6 +276,10 @@ func (m *UserModel) Destroy(id int64) error {
 		return err
 	}
 	m.ID = 0
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
+	}
 	return nil
 }
 
@@ -253,17 +289,18 @@ func (m *UserModel) Update(props map[string]interface{}, conds map[string]interf
 	wherestr := make([]string, 0)
 	cvs := make([]interface{}, 0)
 	for k, v := range props {
-		setstr = append(setstr, k + "=?")
+		setstr = append(setstr, k+"=?")
 		cvs = append(cvs, v)
 	}
 	for k, v := range conds {
-		wherestr = append(wherestr, k + "=?")
+		wherestr = append(wherestr, k+"=?")
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("UPDATE user SET %s WHERE %s", strings.Join(setstr, ", "), strings.Join(wherestr, " AND "))
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
+	st := time.Now().UnixNano() / 1e6
 	var err error
 	if m.Trx != nil {
 		_, err = m.Trx.Exec(sql, cvs...)
@@ -274,6 +311,10 @@ func (m *UserModel) Update(props map[string]interface{}, conds map[string]interf
 		fmt.Printf("Update data failed, err:%v\n", err)
 		return err
 	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
+	}
 	return nil
 }
 
@@ -283,10 +324,15 @@ func (m *UserModel) CountAll() (int, error) {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
+	st := time.Now().UnixNano() / 1e6
 	row := db.QueryRow(sql)
 	var c int
 	if err := row.Scan(&c); err != nil {
 		return 0, err
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return c, nil
 }
@@ -296,17 +342,22 @@ func (m *UserModel) Count(conds map[string]interface{}) (int, error) {
 	wherestr := make([]string, 0)
 	cvs := make([]interface{}, 0)
 	for k, v := range conds {
-		wherestr = append(wherestr, k + "=?")
+		wherestr = append(wherestr, k+"=?")
 		cvs = append(cvs, v)
 	}
 	sql := fmt.Sprintf("SELECT count(1) FROM user WHERE %s", strings.Join(wherestr, " AND "))
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
+	st := time.Now().UnixNano() / 1e6
 	row := db.QueryRow(sql, cvs...)
 	var c int
 	if err := row.Scan(&c); err != nil {
 		return 0, err
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return c, nil
 }
@@ -326,6 +377,7 @@ func (m *UserModel) All() ([]*UserModel, error) {
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}
+	st := time.Now().UnixNano() / 1e6
 	rows, err := db.Query(sql)
 	defer func() {
 		if rows != nil {
@@ -344,6 +396,10 @@ func (m *UserModel) All() ([]*UserModel, error) {
 			return nil, err
 		}
 		ms = append(ms, m)
+	}
+	e := time.Now().UnixNano()/1e6 - st
+	if GoOrmSlowSqlLog > 0 && int(e) >= GoOrmSlowSqlLog {
+		fmt.Printf("["+time.Now().Format("2006-01-02 15:04:05")+"][SlowSQL][%s][%dms]\n", sql, e)
 	}
 	return ms, nil
 }
@@ -364,7 +420,7 @@ func (m *UserModel) Limit(l int) *UserModel {
 }
 
 func (m *UserModel) Page(page int, size int) *UserModel {
-	m.Ofs = (page - 1)*size
+	m.Ofs = (page - 1) * size
 	m.Lmt = size
 	return m
 }
