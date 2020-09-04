@@ -2,8 +2,8 @@ package model
 
 import (
 	. "database/sql"
-	. "go-orm/db"
-	. "go-orm/lib"
+	. "github.com/hide2/go-orm/db"
+	. "github.com/hide2/go-orm/lib"
 	"strings"
 	"time"
 

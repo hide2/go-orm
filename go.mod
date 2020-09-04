@@ -1,4 +1,4 @@
-module go-orm
+module github.com/hide2/go-orm
 
 go 1.15
 

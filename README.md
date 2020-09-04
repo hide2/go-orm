@@ -75,7 +75,7 @@ import (
 	"fmt"
 	"time"
 
-	. "go-orm/model"
+	. "github.com/hide2/go-orm/model"
 )
 
 func main() {

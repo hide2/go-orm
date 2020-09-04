@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	. "go-orm/lib"
 	"io/ioutil"
 	"os"
 	"strings"
 	"text/template"
+
+	. "github.com/hide2/go-orm/lib"
 
 	"gopkg.in/yaml.v2"
 )
