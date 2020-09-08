@@ -1,3 +1,5 @@
+GO-ORM is a simple ORM framework based on code generator
+
 # GO-ORM Features
 - Auto create table
 - Model & CRUD methods generator
@@ -8,6 +10,13 @@
 - Multi datasources
 - Auto/Customized mapping of Model and datasource/table
 - SQL log & Slow SQL log for profiling
+
+# Install Go
+```
+sudo rm -fr /usr/local/go
+Download & Install MacOS pkg from https://golang.org/dl/
+export PATH=$PATH:/usr/local/go/bin
+```
 
 # Usage
 Define Datasources in datasource.yml
