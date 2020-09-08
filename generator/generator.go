@@ -524,7 +524,7 @@ func Gen() {
 		m := ModelAttr{modelname, table, imports, attrs, keys, values, columns, isql, iarg, scanstr}
 		var b bytes.Buffer
 		t.Execute(&b, m)
-		fmt.Println(b.String())
+		// fmt.Println(b.String())
 
 		// Write to file
 		f, err := os.Create(filename)
