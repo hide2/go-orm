@@ -12,14 +12,14 @@ GO-ORM is a simple ORM framework based on code generator
 - SQL log & Slow SQL log for profiling
 
 # Install Go on Mac
-```
+``` bash
 sudo rm -fr /usr/local/go
 Download & Install MacOS pkg from https://golang.org/dl/
 export PATH=$PATH:/usr/local/go/bin
 ```
 
 # Install Go on CentOS
-```
+``` bash
 wget https://golang.org/dl/go1.15.1.linux-amd64.tar.gz
 sudo tar -C /usr/local/ -xzvf go1.15.1.linux-amd64.tar.gz
 sudo vi /etc/profile
@@ -57,7 +57,7 @@ models:
     created_at: time.Time
 ```
 Generate Model go files
-```
+``` bash
 go run gen.go
 ```
 Which will generate Model files
