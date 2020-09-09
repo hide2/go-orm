@@ -11,11 +11,23 @@ GO-ORM is a simple ORM framework based on code generator
 - Auto/Customized mapping of Model and datasource/table
 - SQL log & Slow SQL log for profiling
 
-# Install Go
+# Install Go on Mac
 ```
 sudo rm -fr /usr/local/go
 Download & Install MacOS pkg from https://golang.org/dl/
 export PATH=$PATH:/usr/local/go/bin
+```
+
+# Install Go on CentOS
+```
+wget https://golang.org/dl/go1.15.1.linux-amd64.tar.gz
+sudo tar -C /usr/local/ -xzvf go1.15.1.linux-amd64.tar.gz
+sudo vi /etc/profile
+export GOROOT=/usr/local/go
+export GOPATH=/data/go
+export GOBIN=$GOPATH/bin
+export PATH=$PATH:$GOROOT/bin
+export PATH=$PATH:$GOPATH/bin
 ```
 
 # Usage
