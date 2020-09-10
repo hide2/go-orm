@@ -25,7 +25,7 @@ type UserModel struct {
 	CreatedAt time.Time
 }
 
-func (m *UserModel) Begin() (*Tx, error) {
+func (m *UserModel) Begin() error {
 	db := DBPool[m.Datasource]["w"]
 	sql := "BEGIN"
 	if GoOrmSqlLog {
@@ -33,7 +33,7 @@ func (m *UserModel) Begin() (*Tx, error) {
 	}
 	tx, err := db.Begin()
 	m.Trx = tx
-	return tx, err
+	return err
 }
 
 func (m *UserModel) Commit() error {
