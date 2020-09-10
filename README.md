@@ -1,4 +1,4 @@
-GO-ORM is a simple ORM framework based on code generator
+GO-ORM is a simple ORM framework
 
 # GO-ORM Features
 - Auto create table
