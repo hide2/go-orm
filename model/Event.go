@@ -181,6 +181,10 @@ func (m *EventModel) Where(conds map[string]interface{}) ([]*EventModel, error) 
 	if m.Ofs > 0 {
 		sql = sql + fmt.Sprintf(" OFFSET %d", m.Ofs)
 	}
+	// Clear Limitation
+	m.OdB = ""
+	m.Lmt = 0
+	m.Ofs = 0
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql, cvs)
 	}
@@ -374,6 +378,10 @@ func (m *EventModel) All() ([]*EventModel, error) {
 	if m.Ofs > 0 {
 		sql = sql + fmt.Sprintf(" OFFSET %d", m.Ofs)
 	}
+	// Clear Limitation
+	m.OdB = ""
+	m.Lmt = 0
+	m.Ofs = 0
 	if GoOrmSqlLog {
 		fmt.Println("["+time.Now().Format("2006-01-02 15:04:05")+"][SQL]", sql)
 	}

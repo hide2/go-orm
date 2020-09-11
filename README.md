@@ -178,7 +178,7 @@ func main() {
 	for _, v := range us4 {
 		fmt.Println("[OrderBy]", *v)
 	}
-	us5, _ := User.OrderBy("ID ASC, Name ASC").Offset(0).Limit(5).Where(props2)
+	us5, _ := User.Offset(0).Limit(5).Where(props2)
 	for _, v := range us5 {
 		fmt.Println("[Offset/Limit]", *v)
 	}
@@ -208,4 +208,5 @@ func main() {
 	u, e = User.Find(40)
 	fmt.Println("[Find]", u, e)
 }
+
 ```
