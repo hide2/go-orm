@@ -1,6 +1,6 @@
-GO-ORM is a simple ORM framework
+Go-ORM is a simple ORM framework
 
-# GO-ORM Features
+# Go-ORM Features
 - Auto create table
 - Model & CRUD methods generator
 - Transaction
