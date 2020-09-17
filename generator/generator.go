@@ -23,7 +23,7 @@ import (
 	. "github.com/hide2/go-orm/lib"
 	"strings"
 	"time"
-{{ range $i, $m := .Imports }}
+{{- range $i, $m := .Imports }}
 	"{{$m}}"
 {{- end }}
 )
@@ -37,7 +37,7 @@ type {{.Model}}Model struct {
 	Table      string
 	Trx        *Tx
 	ID         int64
-{{ range $i, $k := .Attrs }}
+{{- range $i, $k := .Attrs }}
 	{{$k}} {{index $.Values $i}}
 {{- end }}
 }
@@ -98,7 +98,7 @@ func (m *{{.Model}}Model) CreateTable() error {
 	db := DBPool[m.Datasource]["w"]
 	sql := ` + "`" + `CREATE TABLE {{.Table}} (
 		id BIGINT AUTO_INCREMENT,
-{{ range $i, $k := .Keys }}
+{{- range $i, $k := .Keys }}
 		{{$k}} {{index $.Columns $i}},
 {{- end }}
 		PRIMARY KEY (id)

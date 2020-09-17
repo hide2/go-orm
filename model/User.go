@@ -7,7 +7,6 @@ import (
 	. "github.com/hide2/go-orm/lib"
 	"strings"
 	"time"
-
 	"fmt"
 )
 
@@ -20,7 +19,6 @@ type UserModel struct {
 	Table      string
 	Trx        *Tx
 	ID         int64
-
 	Name string
 	CreatedAt time.Time
 }
@@ -81,7 +79,6 @@ func (m *UserModel) CreateTable() error {
 	db := DBPool[m.Datasource]["w"]
 	sql := `CREATE TABLE user (
 		id BIGINT AUTO_INCREMENT,
-
 		name VARCHAR(255),
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		PRIMARY KEY (id)
