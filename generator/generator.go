@@ -29,16 +29,16 @@ import (
 )
 
 type {{.Model}}Model struct {
-	OdB        string
-	Lmt        int
-	Ofs        int
+	OdB        string ` + "`json:" + `"-"` + "`" + `
+	Lmt        int ` + "`json:" + `"-"` + "`" + `
+	Ofs        int ` + "`json:" + `"-"` + "`" + `
 	
-	Datasource string
-	Table      string
-	Trx        *Tx
-	ID         int64
+	Datasource string ` + "`json:" + `"-"` + "`" + `
+	Table      string ` + "`json:" + `"-"` + "`" + `
+	Trx        *Tx ` + "`json:" + `"-"` + "`" + `
+	ID         int64 ` + "`json:" + `"id"` + "`" + `
 {{- range $i, $k := .Attrs }}
-	{{$k}} {{index $.Values $i}}
+	{{$k}} {{index $.Values $i}} ` + "`json:" + `"{{index $.Keys $i}}"` + "`" + `
 {{- end }}
 }
 

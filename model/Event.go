@@ -11,16 +11,16 @@ import (
 )
 
 type EventModel struct {
-	OdB        string
-	Lmt        int
-	Ofs        int
+	OdB        string `json:"-"`
+	Lmt        int `json:"-"`
+	Ofs        int `json:"-"`
 	
-	Datasource string
-	Table      string
-	Trx        *Tx
-	ID         int64
-	Name string
-	CreatedAt time.Time
+	Datasource string `json:"-"`
+	Table      string `json:"-"`
+	Trx        *Tx `json:"-"`
+	ID         int64 `json:"id"`
+	Name string `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func (m *EventModel) Begin() error {
